@@ -11,11 +11,11 @@ class MonitoringSheet extends Model
 {
     use HasFactory;
 
-    public function medical_record() : BelongsTo
+    public function medicalRecord() : BelongsTo
     {
         return $this->belongsTo(MedicalRecord::class , 'record_id');
     }
-    public function filled_by() : BelongsTo
+    public function filledBy() : BelongsTo
     {
         return $this->belongsTo(User::class , 'filled_by_id');
     }

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('condition_description');
             $table->string('state_upon_enter');
             $table->string('standard_treatment');
-            $table->string('state_upon_exit');
-            $table->integer('bed_number');
+            $table->string('state_upon_exit')->nullable();
+            $table->integer('bed_number')->nullable();
             $table->date('patient_entry_date');
             $table->date('patient_leaving_date')->nullable();
             $table->timestamps();

@@ -19,7 +19,7 @@ class MedicineRequestFactory extends Factory
     public function definition(): array
     {
         $user = User::inRandomOrder()->first();
-        $record = $user->medical_records()->inRandomOrder()->first();
+        $record = $user->medicalRecords()->inRandomOrder()->first();
         return [
             'user_id' => $user->id,
             'record_id' => $record->id,

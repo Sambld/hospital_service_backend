@@ -19,11 +19,11 @@ return new class extends Migration
             $table->string('place_of_birth');
             $table->string('gender');
             $table->string('address');
-            $table->string('nationality');
+            $table->string('nationality')->default('DZ');
             $table->string('phone_number');
-            $table->string('family_situation');
-            $table->string('emergency_contact_name');
-            $table->string('emergency_contact_number');
+            $table->string('family_situation')->nullable();
+            $table->string('emergency_contact_name')->nullable();
+            $table->string('emergency_contact_number')->nullable();
             $table->timestamps();
         });
     }

@@ -12,7 +12,7 @@ class Treatment extends Model
     use HasFactory;
 
 
-    public function monitoring_sheet() : BelongsTo
+    public function monitoringSheet() : BelongsTo
     {
         return $this->belongsTo(MonitoringSheet::class , 'monitoring_sheet_id');
     }

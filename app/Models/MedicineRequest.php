@@ -18,7 +18,7 @@ class MedicineRequest extends Model
         return $this->belongsTo(User::class , 'user_id');
     }
 
-    public function medical_record() : BelongsTo
+    public function medicalRecord() : BelongsTo
     {
         return $this->belongsTo(MedicalRecord::class , 'record_id' );
     }

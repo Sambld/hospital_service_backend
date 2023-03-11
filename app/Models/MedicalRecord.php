@@ -8,25 +8,39 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @method static find($medical_record_id)
+ */
 class MedicalRecord extends Model
 {
     use HasFactory;
 
-
+    protected $fillable = [
+        'user_id',
+        'patient_id',
+        'medical_specialty',
+        'condition_description',
+        'state_upon_enter',
+        'standard_treatment',
+        'state_upon_exit',
+        'bed_number' ,
+        'patient_entry_date',
+        'patient_leaving_date',
+    ];
     public function patient() : BelongsTo {
         return $this->belongsTo(Patient::class);
     }
 
-    public function assigned_doctor() : BelongsTo
+    public function assignedDoctor() : BelongsTo
     {
         return $this->belongsTo(User::class , 'user_id');
     }
 
-    public function complementary_examinations() : HasMany
+    public function complementaryExaminations() : HasMany
     {
         return $this->hasMany(ComplementaryExamination::class );
     }
-    public function medicine_requests() : HasMany
+    public function medicineRequests() : HasMany
     {
         return $this->hasMany(MedicineRequest::class , 'record_id');
     }
@@ -35,7 +49,7 @@ class MedicalRecord extends Model
         return $this->hasMany(Observation::class);
     }
 
-    public function monitoring_sheets() : HasMany
+    public function monitoringSheets() : HasMany
     {
         return $this->hasMany(MonitoringSheet::class , 'record_id');
     }

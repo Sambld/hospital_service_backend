@@ -11,7 +11,7 @@ class Medicine extends Model
 {
     use HasFactory;
 
-    public function medicine_requests() : BelongsToMany
+    public function medicineRequests() : BelongsToMany
     {
         return $this->belongsToMany(MedicineRequest::class , 'medicine_request_medicine');
     }

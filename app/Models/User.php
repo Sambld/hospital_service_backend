@@ -23,7 +23,6 @@ class User extends Authenticatable
         'last_name',
         'role',
         'username',
-
         'password',
     ];
 
@@ -47,15 +46,15 @@ class User extends Authenticatable
     ];
 
 
-    public function medical_records(): HasMany
+    public function medicalRecords(): HasMany
     {
         return $this->hasMany(MedicalRecord::class);
     }
-    public function medicine_requests(): HasMany
+    public function medicineRequests(): HasMany
     {
         return $this->hasMany(MedicineRequest::class);
     }
-    public function filled_monitoring_sheets(): HasMany
+    public function filledMonitoringSheets(): HasMany
     {
         return $this->hasMany(MonitoringSheet::class);
     }
