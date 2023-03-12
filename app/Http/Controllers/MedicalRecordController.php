@@ -7,13 +7,23 @@ use App\Models\Patient;
 use http\Env\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Psy\Util\Json;
 
 class MedicalRecordController extends Controller
 {
     //
+    public function index($patient_id)
+    {
+        $patient = Patient::find($patient_id);
+        if (!$patient)  return $this->patientNotFound();
 
+
+        return \response()->json( $patient->medicalRecords()->orderBy('patient_entry_date', 'desc')->paginate());
+
+    }
     public function patientMedicalRecord($patient_id, $medical_record_id): JsonResponse
     {
+
         $patient = Patient::find($patient_id);
         $record = MedicalRecord::find($medical_record_id);
         if (!$patient) {
@@ -23,7 +33,16 @@ class MedicalRecordController extends Controller
             return $this->medicalRecordNotFound();
         }
 //        echo $patient->id . ' ' .  $record->patient_id;
-        return ($patient->id == $record->patient_id) ? response()->json(['data' => $record]) : $this->notAuthorized() ;
+        return ($patient->id == $record->patient_id) ? response()->json(['data' => $record->load([
+            'monitoringSheets' => function ($query) {
+                $query->orderBy('filling_date', 'asc');
+                $query->with('treatments.medicine');
+            },
+
+            'observations.images',
+            'complementaryExaminations',
+            'medicineRequests.medicines'
+        ])]) : $this->notAuthorized() ;
 
 
     }
@@ -85,6 +104,25 @@ class MedicalRecordController extends Controller
 
         return response()->json(['message' => 'Medical record updated successfully.', 'data' => $medicalRecord]);
 
+
+    }
+
+    public function delete($patient_id,$medical_record_id) : JsonResponse
+    {
+        $patient = Patient::find($patient_id);
+        $medicalRecord = MedicalRecord::find($medical_record_id);
+        if (!$patient ) {
+            return $this->patientNotFound();
+        }
+        elseif(!$medicalRecord){
+            return $this->medicalRecordNotFound();
+        }elseif ($medicalRecord->patient_id != $patient_id){
+            return $this->notAuthorized();
+        }
+
+        $medicalRecord->delete();
+
+        return response()->json(['message' => 'Medical record deleted successfully.']);
 
     }
 

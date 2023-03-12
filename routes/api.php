@@ -41,10 +41,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::get('/patients/{patient_id}/medical-records/{medical_record_id}' , [\App\Http\Controllers\MedicalRecordController::class,'patientMedicalRecord']);
-    Route::get('/patients' , [\App\Http\Controllers\MedicalRecordController::class,'index']);
+    Route::get('/patients/{patient_id}/medical-records' , [\App\Http\Controllers\MedicalRecordController::class,'index']);
+//    Route::get('/patients' , [\App\Http\Controllers\MedicalRecordController::class,'index']);
     Route::post('/patients/{patient_id}/medical-records' , [\App\Http\Controllers\MedicalRecordController::class,'store']);
     Route::put('/patients/{patient_id}/medical-records/{medical_record_id}' , [\App\Http\Controllers\MedicalRecordController::class,'update']);
-    Route::delete('/patients/{id}' , [\App\Http\Controllers\MedicalRecordController::class,'delete']);
+    Route::delete('/patients/{patient_id}/medical-records/{medical_record_id}' , [\App\Http\Controllers\MedicalRecordController::class,'delete']);
+
+    Route::get('/patients/{patient_id}/medical-records/{medical_record_id}/monitoring-sheets/{monitoring_sheet_id}' , [\App\Http\Controllers\MonitoringSheetController::class,'medicalRecord_monitoringSheet']);
+    Route::get('/patients/{patient_id}/medical-records/{medical_record_id}/monitoring-sheets' , [\App\Http\Controllers\MonitoringSheetController::class,'index']);
+    Route::post('/patients/{patient_id}/medical-records/{medical_record_id}/monitoring-sheets' , [\App\Http\Controllers\MonitoringSheetController::class,'store']);
+    Route::put('/patients/{patient_id}/medical-records/{medical_record_id}/monitoring-sheets/{monitoring_sheet_id}' , [\App\Http\Controllers\MonitoringSheetController::class,'update']);
+    Route::delete('/patients/{patient_id}/medical-records/{medical_record_id}/monitoring-sheets/{monitoring_sheet_id}' , [\App\Http\Controllers\MonitoringSheetController::class,'delete']);
 
 
 });
