@@ -12,11 +12,13 @@ class UserController extends Controller
     public function index($id): JsonResponse
     {
         $user = User::find($id);
-        return $user ? response()->json( $user) : response()->json( ['error'=>'user not found!']);
+        return $user ? response()->json($user) : response()->json(['error' => 'user not found!']);
     }
 
-    public function update(Request $request , $id) : JsonResponse
+    public function update(Request $request, $id): JsonResponse
     {
+
+
         $user = User::find($id);
         if (!$user) {
             return response()->json(['error' => 'user not found!']);
@@ -24,11 +26,11 @@ class UserController extends Controller
         $data = $request->validate([
             'first_name' => 'required|string|min:3|max:255',
             'last_name' => 'required|string|min:3|max:255',
-            'username' => 'required|string|unique:users,username,'.$user->id,
+            'username' => 'required|string|unique:users,username,' . $user->id,
             'role' => 'required|string|in:doctor,nurse,administrator',
             'password' => 'nullable|string|min:6',
         ]);
-        if(!empty($data['password'])) {
+        if (!empty($data['password'])) {
             $data['password'] = bcrypt($data['password']);
         } else {
             unset($data['password']);
@@ -39,19 +41,22 @@ class UserController extends Controller
 
         return response()->json([$user]);
 
-        }
+    }
 
     public function delete($id)
     {
         $user = User::find($id);
         if (!$user) {
             return response()->json(['error' => 'user not found!']);
-        }else {
+        } else {
             $user->tokens()->delete();
             $user->delete();
             return response()->json(['message' => 'user deleted successfully!']);
         }
     }
 
-
+    public function self(): JsonResponse
+    {
+        return response()->json(auth()->user());
+    }
 }

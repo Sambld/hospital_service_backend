@@ -89,6 +89,7 @@ class PatientController extends Controller
 
     public function delete($id): JsonResponse
     {
+
         $patient = Patient::find($id);
         if (!$patient) {
             return response()->json(['error' => 'Patient not found.']);

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\MedicalRecord;
+use App\Models\MonitoringSheet;
 use App\Models\Patient;
 use http\Env\Response;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Psy\Util\Json;
@@ -47,8 +49,12 @@ class MedicalRecordController extends Controller
 
     }
 
+    /**
+     * @throws AuthorizationException
+     */
     public function store(Request $request, $patient_id)
     {
+
         $patient = Patient::find($patient_id);
         if (!$patient) {
             return $this->patientNotFound();
