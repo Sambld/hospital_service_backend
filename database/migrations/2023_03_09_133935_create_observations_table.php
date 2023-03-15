@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('observations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('medical_record_id');
+            $table->string('name');
             $table->foreign('medical_record_id')->references('id')->on('medical_records')->cascadeOnDelete();
             $table->timestamps();
         });

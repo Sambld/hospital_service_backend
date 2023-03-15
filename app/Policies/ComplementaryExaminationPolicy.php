@@ -3,6 +3,8 @@
 namespace App\Policies;
 
 use App\Models\ComplementaryExamination;
+use App\Models\MedicalRecord;
+use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -24,20 +26,27 @@ class ComplementaryExaminationPolicy
         //
     }
 
+    public function belongings(User $user , ComplementaryExamination $complementaryExamination , Patient $patient , MedicalRecord $medicalRecord): bool
+    {
+//        dd($complementaryExamination, $patient, $medicalRecord);
+        return $complementaryExamination->medical_record_id == $medicalRecord->id && $medicalRecord->patient_id == $patient->id;
+    }
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user , Patient $patient , MedicalRecord $medicalRecord): bool
     {
-        //
+        return $medicalRecord->patient_id == $patient->id;
+
+
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, ComplementaryExamination $complementaryExamination): bool
+    public function updateOrDelete(User $user, ComplementaryExamination $complementaryExamination, Patient $patient , MedicalRecord $medicalRecord): bool
     {
-        //
+       return $complementaryExamination->medical_record_id == $medicalRecord->id && $medicalRecord->patient_id == $patient->id && $user->isDoctor() && $user->id == $medicalRecord->user_id;
     }
 
     /**

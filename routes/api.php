@@ -67,4 +67,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/patients/{patient}/medical-records/{medical_record}/examinations/{examination}' , [ComplementaryExaminationController::class,'update']);
     Route::delete('/patients/{patient}/medical-records/{medical_record}/examinations/{examination}' , [ComplementaryExaminationController::class,'delete']);
 
+
+    Route::get('/patients/{patient}/medical-records/{medical_record}/observations/{observation}' , [\App\Http\Controllers\ObservationController::class,'observation']);
+    Route::get('/patients/{patient}/medical-records/{medical_record}/observations' , [\App\Http\Controllers\ObservationController::class,'index']);
+    Route::post('/patients/{patient}/medical-records/{medical_record}/observations' , [\App\Http\Controllers\ObservationController::class,'store']);
+    Route::put('/patients/{patient}/medical-records/{medical_record}/observations/{observation}' , [\App\Http\Controllers\ObservationController::class,'update']);
+    Route::delete('/patients/{patient}/medical-records/{medical_record}/observations/{observation}' , [\App\Http\Controllers\ObservationController::class,'delete']);
+
 });

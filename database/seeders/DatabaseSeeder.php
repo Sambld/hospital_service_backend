@@ -11,7 +11,6 @@ use App\Models\MedicineRequest;
 use App\Models\MonitoringSheet;
 use App\Models\Observation;
 use App\Models\Patient;
-use App\Models\Staff;
 use App\Models\Treatment;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -33,6 +32,8 @@ class DatabaseSeeder extends Seeder
 
         Patient::factory(20)->create();
         User::factory(6)->create();
+        $sam = new User(['first_name' => 'sam' , 'last_name' => 'samo' , 'username' => 'sam' , 'password' => bcrypt('samisamo') , 'role' => 'doctor']);
+        $sam->save();
         Medicine::factory(100)->create();
         MedicalRecord::factory(30)->create();
         MonitoringSheet::factory(200)->has(Treatment::factory()->count(5))->create();

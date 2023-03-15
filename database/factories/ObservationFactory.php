@@ -20,6 +20,7 @@ class ObservationFactory extends Factory
         $record = MedicalRecord::inRandomOrder()->first();
         return [
             'medical_record_id' => $record->id,
+            'name' => $this->faker->sentence,
         ];
     }
 }

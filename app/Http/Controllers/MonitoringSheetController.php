@@ -31,8 +31,8 @@ class MonitoringSheetController extends Controller
     public function monitoringSheet(Patient $patient, MedicalRecord $medicalRecord, MonitoringSheet $monitoringSheet): JsonResponse
     {
         $this->authorize('belongings', [$monitoringSheet, $patient, $medicalRecord,]);
-        $monitoringSheet['can_update'] = Auth::user()->can('update' ,[$monitoringSheet,$patient,$medicalRecord]);
-        $monitoringSheet['can_delete'] = Auth::user()->can('delete' ,[$monitoringSheet,$medicalRecord]);
+        $monitoringSheet = $this->add_abilities($monitoringSheet, $patient, $medicalRecord);
+
         return response()->json(['data' => $monitoringSheet]);
     }
 
@@ -40,10 +40,8 @@ class MonitoringSheetController extends Controller
     {
         $this->authorize('create' , [MonitoringSheet::class,$patient, $medicalRecord]);
         $sheets = $medicalRecord->monitoringSheets()->orderBy('filling_date' , 'asc')->get();
-        $response = $sheets->map(function ($sheet) use ($patient,$medicalRecord) {
-            $sheet->can_update = Auth::user()->can('update', [$sheet,$patient,$medicalRecord]);
-            $sheet->can_delete = Auth::user()->can('delete', [$sheet,$medicalRecord]);
-            return $sheet;
+        $response = $sheets->map(function ($sheet) use ($patient, $medicalRecord) {
+            return $this->add_abilities($sheet, $patient, $medicalRecord);
         });
         return response()->json(['data' => $response]);
     }
@@ -118,14 +116,9 @@ class MonitoringSheetController extends Controller
         return response()->json(['message' => 'monitoring sheet deleted successfully!']);
 
     }
-
-    public function notFound()
-    {
-        return response()->json(['message' => 'Not found!'], 404);
-    }
-
-    public function notAuthorized()
-    {
-        return response()->json(['message' => 'Not Authorized!'], 401);
+    public function add_abilities($model, $patient, $medicalRecord) {
+        $model['can_update'] = Auth::user()->can('update', [$model, $patient, $medicalRecord]);
+        $model['can_delete'] = Auth::user()->can('delete', [$model, $medicalRecord]);
+        return $model;
     }
 }

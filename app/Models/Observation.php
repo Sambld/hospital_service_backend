@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Observation extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['name'];
     public function medicalRecord() : BelongsTo
     {
         return $this->belongsTo(MedicalRecord::class);
