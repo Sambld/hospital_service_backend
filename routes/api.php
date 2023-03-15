@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ComplementaryExaminationController;
+use App\Http\Controllers\MedicalRecordController;
+use App\Http\Controllers\MonitoringSheetController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,25 +37,34 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
-    Route::get('/patients/{id}' , [\App\Http\Controllers\PatientController::class,'patient']);
+    Route::get('/patients/{patient}' , [\App\Http\Controllers\PatientController::class,'patient']);
     Route::get('/patients' , [\App\Http\Controllers\PatientController::class,'index']);
     Route::post('/patients' , [\App\Http\Controllers\PatientController::class,'store']);
-    Route::put('/patients/{id}' , [\App\Http\Controllers\PatientController::class,'update']);
-    Route::delete('/patients/{id}' , [\App\Http\Controllers\PatientController::class,'delete']);
+    Route::put('/patients/{patient}' , [\App\Http\Controllers\PatientController::class,'update']);
+    Route::delete('/patients/{patient}' , [\App\Http\Controllers\PatientController::class,'delete']);
 
 
-    Route::get('/patients/{patient_id}/medical-records/{medical_record_id}' , [\App\Http\Controllers\MedicalRecordController::class,'patientMedicalRecord']);
-    Route::get('/patients/{patient_id}/medical-records' , [\App\Http\Controllers\MedicalRecordController::class,'index']);
+    Route::get('/patients/{patient}/medical-records/{medical_record}' , [MedicalRecordController::class,'patientMedicalRecord']);
+    Route::get('/patients/{patient}/medical-records' , [MedicalRecordController::class,'index']);
 //    Route::get('/patients' , [\App\Http\Controllers\MedicalRecordController::class,'index']);
-    Route::post('/patients/{patient_id}/medical-records' , [\App\Http\Controllers\MedicalRecordController::class,'store']);
-    Route::put('/patients/{patient_id}/medical-records/{medical_record_id}' , [\App\Http\Controllers\MedicalRecordController::class,'update']);
-    Route::delete('/patients/{patient_id}/medical-records/{medical_record_id}' , [\App\Http\Controllers\MedicalRecordController::class,'delete']);
+    Route::post('/patients/{patient}/medical-records' , [MedicalRecordController::class,'store']);
+    Route::put('/patients/{patient}/medical-records/{medical_record}' , [MedicalRecordController::class,'update']);
+    Route::delete('/patients/{patient}/medical-records/{medical_record}' , [MedicalRecordController::class,'delete']);
 
-    Route::get('/patients/{patient}/medical-records/{medical_record}/monitoring-sheets/{monitoring_sheet}' , [\App\Http\Controllers\MonitoringSheetController::class,'monitoringSheet']);
-    Route::get('/patients/{patient}/medical-records/{medical_record}/monitoring-sheets' , [\App\Http\Controllers\MonitoringSheetController::class,'index']);
-    Route::post('/patients/{patient}/medical-records/{medical_record}/sheet' , [\App\Http\Controllers\MonitoringSheetController::class,'store']);
-    Route::put('/patients/{patient}/medical-records/{medical_record}/monitoring-sheets/{monitoring_sheet}' , [\App\Http\Controllers\MonitoringSheetController::class,'update']);
-    Route::delete('/patients/{patient}/medical-records/{medical_record}/monitoring-sheets/{monitoring_sheet}' , [\App\Http\Controllers\MonitoringSheetController::class,'delete']);
+    Route::get('/patients/{patient}/medical-records/{medical_record}/monitoring-sheets/{monitoring_sheet}' , [MonitoringSheetController::class,'monitoringSheet']);
+    Route::get('/patients/{patient}/medical-records/{medical_record}/monitoring-sheets' , [MonitoringSheetController::class,'index']);
+    Route::post('/patients/{patient}/medical-records/{medical_record}/monitoring-sheets' , [MonitoringSheetController::class,'store']);
+    Route::put('/patients/{patient}/medical-records/{medical_record}/monitoring-sheets/{monitoring_sheet}' , [MonitoringSheetController::class,'update']);
+    Route::delete('/patients/{patient}/medical-records/{medical_record}/monitoring-sheets/{monitoring_sheet}' , [MonitoringSheetController::class,'delete']);
 
+
+
+
+
+    Route::get('/patients/{patient}/medical-records/{medical_record}/examinations/{examination}' , [ComplementaryExaminationController::class,'examination']);
+    Route::get('/patients/{patient}/medical-records/{medical_record}/examinations' , [ComplementaryExaminationController::class,'index']);
+    Route::post('/patients/{patient}/medical-records/{medical_record}/examinations' , [ComplementaryExaminationController::class,'store']);
+    Route::put('/patients/{patient}/medical-records/{medical_record}/examinations/{examination}' , [ComplementaryExaminationController::class,'update']);
+    Route::delete('/patients/{patient}/medical-records/{medical_record}/examinations/{examination}' , [ComplementaryExaminationController::class,'delete']);
 
 });

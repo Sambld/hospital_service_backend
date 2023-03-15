@@ -5,46 +5,41 @@ namespace App\Http\Controllers;
 use App\Models\MedicalRecord;
 use App\Models\MonitoringSheet;
 use App\Models\Patient;
+use Egulias\EmailValidator\MessageIDParser;
 use http\Env\Response;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Psy\Util\Json;
 
 class MedicalRecordController extends Controller
 {
     //
-    public function index($patient_id)
+    public function index(Patient $patient)
     {
-        $patient = Patient::find($patient_id);
-        if (!$patient)  return $this->patientNotFound();
-
 
         return \response()->json( $patient->medicalRecords()->orderBy('patient_entry_date', 'desc')->paginate());
 
     }
-    public function patientMedicalRecord($patient_id, $medical_record_id): JsonResponse
+    public function patientMedicalRecord(Patient $patient  , MedicalRecord $medicalRecord): JsonResponse
     {
 
-        $patient = Patient::find($patient_id);
-        $record = MedicalRecord::find($medical_record_id);
-        if (!$patient) {
-            return $this->patientNotFound();
-        }
-        if (!$record) {
-            return $this->medicalRecordNotFound();
-        }
+        $this->authorize('belongings' ,  [$medicalRecord , $patient]);
 //        echo $patient->id . ' ' .  $record->patient_id;
-        return ($patient->id == $record->patient_id) ? response()->json(['data' => $record->load([
-            'monitoringSheets' => function ($query) {
-                $query->orderBy('filling_date', 'asc');
-                $query->with('treatments.medicine');
-            },
-
-            'observations.images',
-            'complementaryExaminations',
-            'medicineRequests.medicines'
-        ])]) : $this->notAuthorized() ;
+        $medicalRecord['can_update'] = Auth::user()->can('update' , $medicalRecord);
+        $medicalRecord['can_delete'] = Auth::user()->can('delete' , $medicalRecord);
+        return response()->json(['data' => $medicalRecord]) ;
+//        return response()->json(['data' => $medicalRecord->load([
+//            'monitoringSheets' => function ($query) {
+//                $query->orderBy('filling_date', 'asc');
+//                $query->with('treatments.medicine');
+//            },
+//
+//            'observations.images',
+//            'complementaryExaminations',
+//            'medicineRequests.medicines'
+//        ])]) ;
 
 
     }
@@ -52,13 +47,9 @@ class MedicalRecordController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function store(Request $request, $patient_id)
+    public function store(Request $request, Patient $patient)
     {
 
-        $patient = Patient::find($patient_id);
-        if (!$patient) {
-            return $this->patientNotFound();
-        }
 
         $validatedData = $request->validate([
 
@@ -82,18 +73,11 @@ class MedicalRecordController extends Controller
 
 
 
-    public function update( $patient_id, $medical_record_id): JsonResponse
+    public function update( Patient $patient    , MedicalRecord $medicalRecord): JsonResponse
     {
-        $patient = Patient::find($patient_id);
-        $medicalRecord = MedicalRecord::find($medical_record_id);
-        if (!$patient ) {
-            return $this->patientNotFound();
-        }
-        elseif(!$medicalRecord){
-            return $this->medicalRecordNotFound();
-        }elseif ($medicalRecord->patient_id != $patient_id){
-            return $this->notAuthorized();
-        }
+
+        $this->authorize('belongings' ,  [$medicalRecord , $patient]);
+        $this->authorize('update' , $medicalRecord);
 
         $validatedData = \request()->validate([
             'medical_specialty' => 'required|string|max:255',
@@ -113,18 +97,10 @@ class MedicalRecordController extends Controller
 
     }
 
-    public function delete($patient_id,$medical_record_id) : JsonResponse
+    public function delete(Patient $patient,MedicalRecord $medicalRecord) : JsonResponse
     {
-        $patient = Patient::find($patient_id);
-        $medicalRecord = MedicalRecord::find($medical_record_id);
-        if (!$patient ) {
-            return $this->patientNotFound();
-        }
-        elseif(!$medicalRecord){
-            return $this->medicalRecordNotFound();
-        }elseif ($medicalRecord->patient_id != $patient_id){
-            return $this->notAuthorized();
-        }
+
+        $this->authorize('delete' , $medicalRecord);
 
         $medicalRecord->delete();
 
@@ -132,18 +108,18 @@ class MedicalRecordController extends Controller
 
     }
 
-    public function patientNotFound(): JsonResponse
-    {
-        return response()->json(['error' => 'Patient not found.'] , 404);
-    }
-
-    public function medicalRecordNotFound(): JsonResponse
-    {
-        return response()->json(['error' => 'Medical record not found.'] , 404);
-    }
-    public function notAuthorized(): JsonResponse
-    {
-        return response()->json(['error' => 'Not Authorized.'],401);
-    }
+//    public function patientNotFound(): JsonResponse
+//    {
+//        return response()->json(['error' => 'Patient not found.'] , 404);
+//    }
+//
+//    public function medicalRecordNotFound(): JsonResponse
+//    {
+//        return response()->json(['error' => 'Medical record not found.'] , 404);
+//    }
+//    public function notAuthorized(): JsonResponse
+//    {
+//        return response()->json(['error' => 'Not Authorized.'],401);
+//    }
 
 }

@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use App\Http\Controllers\ComplementaryExaminationController;
+use App\Models\ComplementaryExamination;
 use App\Models\MedicalRecord;
 use App\Models\MonitoringSheet;
+use App\Policies\MedicalRecordPolicy;
 use App\Policies\SheetPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -17,6 +20,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
             MonitoringSheet::class => SheetPolicy::class,
+        MedicalRecord::class => MedicalRecordPolicy::class,
+        ComplementaryExamination::class => ComplementaryExaminationController::class
 
     ];
 

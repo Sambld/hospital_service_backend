@@ -58,4 +58,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(MonitoringSheet::class);
     }
+
+
+    public function isDoctor(){return $this->role == 'doctor';}
+    public function isAdmin(){return $this->role == 'administrator';}
+    public function isNurse(){return $this->role == 'nurse';}
+    public function isPharm(){return $this->role == 'pharmacist';}
+
+
+
 }

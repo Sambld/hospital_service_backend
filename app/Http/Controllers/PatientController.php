@@ -9,15 +9,11 @@ use Illuminate\Http\Request;
 class PatientController extends Controller
 {
     //
-    public function patient($id): JsonResponse
+    public function patient(Patient $patient): JsonResponse
     {
-        $patient = Patient::find($id);
-        if (!$patient) {
-            return response()->json(['error' => 'Patient not found.']);
 
-        } else {
             return response()->json(['data' => ['patient' => $patient]]);
-        }
+
 
     }
 
@@ -25,16 +21,13 @@ class PatientController extends Controller
     {
 
 
-        if (\request()->has('page')) {
-            $patients = Patient::withCount('medical_records')->paginate();
-            return response()->json($patients);
-        }
+
         if(\request()->has('q')){
             $patients = $this->search(\request()->q);
             return response()->json([ 'count' => $patients->count(),'data' => $patients ]);
 
         }
-        return response()->json(['data' => Patient::all()]);
+        return response()->json(['data' => Patient::withCount('medical_records')->paginate()]);
 //        return response()->json(['data' => Patient::withCount('medical_records')->get()]);
     }
 
@@ -59,13 +52,9 @@ class PatientController extends Controller
         return response()->json(['message' => 'Patient created successfully.', 'patient' => $patient]);
     }
 
-    public function update($id): JsonResponse
+    public function update(Patient $patient): JsonResponse
     {
-        $patient = Patient::find($id);
-        if (!$patient) {
-            return response()->json(['error' => 'Patient not found.']);
 
-        }
 
         $data = request()->validate([
             'first_name' => 'required|string|max:255',
@@ -87,13 +76,10 @@ class PatientController extends Controller
 
     }
 
-    public function delete($id): JsonResponse
+    public function delete(Patient $patient): JsonResponse
     {
 
-        $patient = Patient::find($id);
-        if (!$patient) {
-            return response()->json(['error' => 'Patient not found.']);
-        }
+
         $patient->delete();
         return response()->json(['message' => 'Patient deleted successfully.']);
     }

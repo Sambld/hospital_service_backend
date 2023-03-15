@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('monitoring_sheet_id');
             $table->unsignedBigInteger('medicine_id');
             $table->foreign('monitoring_sheet_id')->references('id')->on('monitoring_sheets')->cascadeOnDelete();
-            $table->foreign('medicine_id')->references('id')->on('medicines')->cascadeOnDelete();
+//            $table->foreign('medicine_id')->references('id')->on('medicines')->cascadeOnDelete();
             $table->string('name');
             $table->string('dose');
             $table->string('type');

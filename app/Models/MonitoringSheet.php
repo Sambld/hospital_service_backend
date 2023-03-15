@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+
 class MonitoringSheet extends Model
 {
     use HasFactory;
@@ -31,6 +32,10 @@ class MonitoringSheet extends Model
         return $this->belongsTo(User::class, 'filled_by_id');
     }
 
+    public function isFilled()
+    {
+        return $this->filled_by_id != null;
+    }
     public function treatments(): HasMany
     {
         return $this->hasMany(Treatment::class);
