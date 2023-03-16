@@ -8,10 +8,12 @@ use App\Models\ComplementaryExamination;
 use App\Models\MedicalRecord;
 use App\Models\MonitoringSheet;
 use App\Models\Observation;
+use App\Models\Treatment;
 use App\Policies\ComplementaryExaminationPolicy;
 use App\Policies\MedicalRecordPolicy;
 use App\Policies\ObservationPolicy;
 use App\Policies\SheetPolicy;
+use App\Policies\TreatmentPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -26,6 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         MedicalRecord::class => MedicalRecordPolicy::class,
         ComplementaryExamination::class => ComplementaryExaminationPolicy::class,
         Observation::class => ObservationPolicy::class,
+        Treatment::class => TreatmentPolicy::class,
 
     ];
 

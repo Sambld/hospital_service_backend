@@ -11,11 +11,18 @@ class Treatment extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'dose',
+        'type',
+        'medicine_id'
+    ];
 
-    public function monitoringSheet() : BelongsTo
+    public function monitoringSheet(): BelongsTo
     {
-        return $this->belongsTo(MonitoringSheet::class , 'monitoring_sheet_id');
+        return $this->belongsTo(MonitoringSheet::class, 'monitoring_sheet_id');
     }
+
     public function medicine(): BelongsTo
     {
         return $this->belongsTo(Medicine::class);

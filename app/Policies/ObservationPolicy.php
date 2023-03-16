@@ -39,7 +39,7 @@ class ObservationPolicy
     {
 //        error_log('observation create');
 //        dd($patient, $medicalRecord);
-        return $medicalRecord->patient_id == $patient->id;
+        return $medicalRecord->patient_id == $patient->id && $user->id == $medicalRecord->user_id;
 
 
     }
