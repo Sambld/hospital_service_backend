@@ -27,7 +27,7 @@ class PatientController extends Controller
             return response()->json([ 'count' => $patients->count(),'data' => $patients ]);
 
         }
-        return response()->json(['data' => Patient::withCount('medical_records')->paginate()]);
+        return response()->json(['data' => Patient::withCount('medicalRecords')->paginate()]);
 //        return response()->json(['data' => Patient::withCount('medical_records')->get()]);
     }
 
