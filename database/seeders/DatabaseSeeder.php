@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
         ComplementaryExamination::factory(10)->create();
         Observation::factory(10)->create();
         Image::factory(10)->create();
-        MedicineRequest::factory()->hasAttached(Medicine::factory()->count(5))->count(20)->create();
+        MedicineRequest::factory()->count(20)->create();
 
 
 

@@ -11,6 +11,17 @@ class Medicine extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'category',
+        'description',
+        'quantity',
+        'is_pharmaceutical',
+        'expiration_date',
+        'supplier',
+        'manufacturer'
+    ];
+
     public function medicineRequests() : BelongsToMany
     {
         return $this->belongsToMany(MedicineRequest::class , 'medicine_request_medicine');

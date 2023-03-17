@@ -17,20 +17,14 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->unsignedBigInteger('record_id');
             $table->foreign('record_id')->references('id')->on('medical_records')->cascadeOnDelete();
+            $table->unsignedBigInteger('medicine_id');
+            $table->foreign('medicine_id')->references('id')->on('medicines')->cascadeOnDelete();
             $table->integer('quantity');
-            $table->string('status')->nullable();
+            $table->string('status')->default('Pending');
             $table->string('review')->nullable();
             $table->timestamps();
         });
 
-        Schema::create('medicine_request_medicine', function (Blueprint $table) {
-
-            $table->unsignedBigInteger('medicine_request_id');
-            $table->foreign('medicine_request_id')->references('id')->on('medicine_requests')->cascadeOnDelete();
-            $table->unsignedBigInteger('medicine_id');
-            $table->foreign('medicine_id')->references('id')->on('medicines')->cascadeOnDelete();
-
-        });
 
     }
 

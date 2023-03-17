@@ -5,12 +5,18 @@ namespace App\Providers;
 // use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\ComplementaryExaminationController;
 use App\Models\ComplementaryExamination;
+use App\Models\Image;
 use App\Models\MedicalRecord;
+use App\Models\Medicine;
+use App\Models\MedicineRequest;
 use App\Models\MonitoringSheet;
 use App\Models\Observation;
 use App\Models\Treatment;
 use App\Policies\ComplementaryExaminationPolicy;
+use App\Policies\ImagePolicy;
 use App\Policies\MedicalRecordPolicy;
+use App\Policies\MedicinePolicy;
+use App\Policies\MedicineRequestPolicy;
 use App\Policies\ObservationPolicy;
 use App\Policies\SheetPolicy;
 use App\Policies\TreatmentPolicy;
@@ -24,11 +30,14 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-            MonitoringSheet::class => SheetPolicy::class,
+        MonitoringSheet::class => SheetPolicy::class,
         MedicalRecord::class => MedicalRecordPolicy::class,
         ComplementaryExamination::class => ComplementaryExaminationPolicy::class,
         Observation::class => ObservationPolicy::class,
         Treatment::class => TreatmentPolicy::class,
+        Medicine::class => MedicinePolicy::class,
+        MedicineRequest::class => MedicineRequestPolicy::class,
+        Image::class => ImagePolicy::class,
 
     ];
 

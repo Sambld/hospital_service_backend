@@ -44,7 +44,7 @@ class AuthController extends Controller
             'last_name' => 'required|string|max:255',
             'username' => 'required|string|unique:users',
             'password' => 'required|string|min:6',
-            'role' => 'required|string|in:doctor,nurse,administrator',
+            'role' => 'required|string|in:doctor,nurse,administrator,pharmacist',
         ]);
 
         $user = new User([
