@@ -24,7 +24,14 @@ class PatientController extends Controller
 
         if(\request()->has('q')){
             $patients = $this->search(\request()->q);
-            return response()->json([ 'count' => $patients->count(),'data' => $patients ]);
+            if ($patients->isEmpty()){
+                return response()->json([ 'message' => 'not found!' ],404);
+
+            }
+            else{
+                return response()->json([ 'count' => $patients->count(),'data' => $patients->toQuery()->paginate() ]);
+
+            }
 
         }
         return response()->json(['data' => Patient::withCount('medicalRecords')->paginate()]);
