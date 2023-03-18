@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ComplementaryExaminationController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\MandatoryDeclarationController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\MedicineRequestController;
 use App\Http\Controllers\MonitoringSheetController;
@@ -72,6 +73,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/patients/{patient}/medical-records/{medical_record}/examinations' , [ComplementaryExaminationController::class,'store']);
     Route::put('/patients/{patient}/medical-records/{medical_record}/examinations/{examination}' , [ComplementaryExaminationController::class,'update']);
     Route::delete('/patients/{patient}/medical-records/{medical_record}/examinations/{examination}' , [ComplementaryExaminationController::class,'delete']);
+
+    Route::get('/patients/{patient}/medical-records/{medical_record}/mandatory-declaration' , [MandatoryDeclarationController::class,'index']);
+    Route::post('/patients/{patient}/medical-records/{medical_record}/mandatory-declaration' , [MandatoryDeclarationController::class,'store']);
+    Route::put('/patients/{patient}/medical-records/{medical_record}/mandatory-declaration' , [MandatoryDeclarationController::class,'update']);
+    Route::delete('/patients/{patient}/medical-records/{medical_record}/mandatory-declaration' , [MandatoryDeclarationController::class,'delete']);
+
 
 
     Route::get('/patients/{patient}/medical-records/{medical_record}/observations/{observation}' , [ObservationController::class,'observation']);

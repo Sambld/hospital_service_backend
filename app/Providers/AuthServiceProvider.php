@@ -6,6 +6,7 @@ namespace App\Providers;
 use App\Http\Controllers\ComplementaryExaminationController;
 use App\Models\ComplementaryExamination;
 use App\Models\Image;
+use App\Models\MandatoryDeclaration;
 use App\Models\MedicalRecord;
 use App\Models\Medicine;
 use App\Models\MedicineRequest;
@@ -14,6 +15,7 @@ use App\Models\Observation;
 use App\Models\Treatment;
 use App\Policies\ComplementaryExaminationPolicy;
 use App\Policies\ImagePolicy;
+use App\Policies\MandatoryDeclarationPolicy;
 use App\Policies\MedicalRecordPolicy;
 use App\Policies\MedicinePolicy;
 use App\Policies\MedicineRequestPolicy;
@@ -38,6 +40,7 @@ class AuthServiceProvider extends ServiceProvider
         Medicine::class => MedicinePolicy::class,
         MedicineRequest::class => MedicineRequestPolicy::class,
         Image::class => ImagePolicy::class,
+        MandatoryDeclaration::class => MandatoryDeclarationPolicy::class
 
     ];
 

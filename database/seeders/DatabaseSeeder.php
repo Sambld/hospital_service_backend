@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\ComplementaryExamination;
 use App\Models\Image;
+use App\Models\MandatoryDeclaration;
 use App\Models\MedicalRecord;
 use App\Models\Medicine;
 use App\Models\MedicineRequest;
@@ -35,7 +36,7 @@ class DatabaseSeeder extends Seeder
         $sam = new User(['first_name' => 'sam' , 'last_name' => 'samo' , 'username' => 'sam' , 'password' => bcrypt('samisamo') , 'role' => 'doctor']);
         $sam->save();
         Medicine::factory(100)->create();
-        MedicalRecord::factory(30)->create();
+        MedicalRecord::factory(30)->has(MandatoryDeclaration::factory())->create();
         MonitoringSheet::factory(200)->has(Treatment::factory()->count(5))->create();
         ComplementaryExamination::factory(10)->create();
         Observation::factory(10)->create();

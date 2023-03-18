@@ -53,4 +53,9 @@ class MedicalRecord extends Model
     {
         return $this->hasMany(MonitoringSheet::class , 'record_id');
     }
+
+    public function mandatoryDeclaration(): HasOne
+    {
+        return $this->hasOne(MandatoryDeclaration::class, 'medical_record_id');
+    }
 }
