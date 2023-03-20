@@ -16,15 +16,15 @@ class ObservationController extends Controller
     public function observation(Patient $patient, MedicalRecord $medicalRecord, Observation $observation): JsonResponse
     {
         $this->authorize('belongings', [$observation, $patient, $medicalRecord,]);
-        $data = $this->add_abilities($observation, $patient, $medicalRecord);
+        $data = $this->add_abilities($observation->load('images'), $patient, $medicalRecord);
         return response()->json(['data' => $data]);
     }
 
     public function index(Patient $patient, MedicalRecord $medicalRecord)
     {
 //        dd($patient, $medicalRecord);
-        $this->authorize('create', [Observation::class, $patient, $medicalRecord]);
-        $observations = $medicalRecord->observations;
+        $this->authorize('index', [Observation::class, $patient, $medicalRecord]);
+        $observations = $medicalRecord->observations->load('images');
 //        dd($observations);
         $data = [];
         foreach ($observations as $observation) {

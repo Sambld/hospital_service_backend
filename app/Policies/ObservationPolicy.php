@@ -31,7 +31,14 @@ class ObservationPolicy
     {
         //
     }
+    public function index(User $user , Patient $patient , MedicalRecord $medicalRecord): bool
+    {
+//        error_log('observation create');
+//        dd($patient, $medicalRecord);
+        return $medicalRecord->patient_id == $patient->id ;
+//        return true;
 
+    }
     /**
      * Determine whether the user can create models.
      */
@@ -40,7 +47,7 @@ class ObservationPolicy
 //        error_log('observation create');
 //        dd($patient, $medicalRecord);
         return $medicalRecord->patient_id == $patient->id && $user->id == $medicalRecord->user_id;
-
+//        return true;
 
     }
 

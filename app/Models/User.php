@@ -65,6 +65,11 @@ class User extends Authenticatable
     public function isNurse(){return $this->role == 'nurse';}
     public function isPharm(){return $this->role == 'pharmacist';}
 
+    public function fullname()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
 
 
 }
