@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CollectionHelper;
 use App\Models\MedicalRecord;
 use App\Models\Medicine;
 use App\Models\MedicineRequest;
@@ -25,7 +26,9 @@ class MedicineRequestController extends Controller
     {
         $status = \request()->query('status');
 
-        $records = MedicalRecord::paginate(20);
+        $records = MedicalRecord::with(['medicineRequests' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }])->get();
 
         $medicineRequestsPerRecord = $records->map(function ($record) use ($status) {
             $medicineRequests = $record->medicineRequests;
@@ -33,6 +36,7 @@ class MedicineRequestController extends Controller
             $all_requests_responded_to = $unrespondedRequests->isEmpty();
 
             if (($status == 'open' && !$all_requests_responded_to) || ($status == 'closed' && $all_requests_responded_to) || !$status) {
+                $medicineRequests = $medicineRequests->sortByDesc('created_at');
                 return [
                     'medical_record_id' => $record->id,
                     'doctor' => $record->assignedDoctor->fullname(),
@@ -44,70 +48,13 @@ class MedicineRequestController extends Controller
             }
         })->filter()->values();
 
+        $medicineRequestsPerRecord = CollectionHelper::paginate($medicineRequestsPerRecord, 15);
 //        return response()->json(['data' => $medicineRequestsPerRecord]);
-        return response()->json(['data'=>
-            $medicineRequestsPerRecord,
-            ["pagination" =>
-                [
-                    "total"=>$records->total(),
-                    "per_page"=>$records->perPage(),
-                    "current_page"=>$records->currentPage(),
-                    "last_page"=>$records->lastPage(),
-                    "from"=>$records->firstItem(),
-                    "to"=>$records->lastItem()
-                ]
-        ]]);
+        return response()->json(
+            $medicineRequestsPerRecord
+        );
     }
-//    public function pharmacy_index()
-//    {
-//        $perPage = 20; // number of records to show per page
-//        $status = \request()->query('status');
-//
-//        $records = MedicalRecord::all();
-//
-////        return response()->json(['data' => $records]);
-//        $medicineRequestsPerRecord = [];
-//
-//        foreach ($records as $record) {
-//            $medicineRequests = $record->medicineRequests;
-//            $unrespondedRequests = $medicineRequests->where('status', 'Pending');
-//            $all_requests_responded_to = $unrespondedRequests->isEmpty();
-//
-//            $medicineRequestsPerRecord[] = [
-//                'medical_record_id' => $record->id,
-//                'doctor' => $record->assignedDoctor->fullname(),
-//                'patient' => $record->patient->fullname(),
-//                'patient_id' => $record->patient->id,
-//                'all_requests_responded_to' => $all_requests_responded_to,
-//                'medicine_requests' => $medicineRequests,
-//            ];
-//        }
-//
-//        if($status == 'open'){
-//           // return only medical record medicine request with  all_requests_responded_to = false
-//        }elseif ($status == 'closed'){
-//            // return only medical record medicine request with  all_requests_responded_to = true
-//        }
-//
-//        $meta = [
-//            'current_page' => $records->currentPage(),
-//            'last_page' => $records->lastPage(),
-//            'per_page' => $records->perPage(),
-//            'total' => $records->total(),
-//        ];
-//
-//        if ($records->hasMorePages()) {
-//            $meta['next_page_url'] = $records->nextPageUrl();
-//        }
-//
-//        $meta['next_page_url'] = $records->hasMorePages() ? $records->nextPageUrl() : null;
-//        $meta['prev_page_url'] = $records->previousPageUrl() ? $records->previousPageUrl() : null;
-//
-//        return response()->json([
-//            'data' => $medicineRequestsPerRecord,
-//            'meta' => $meta,
-//        ]);
-//    }
+
 
 
     public function index(Patient $patient, MedicalRecord $medicalRecord)
