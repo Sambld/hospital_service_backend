@@ -43,7 +43,7 @@ class MedicineRequestController extends Controller
                     'patient' => $record->patient->fullname(),
                     'patient_id' => $record->patient->id,
                     'all_requests_responded_to' => $all_requests_responded_to,
-                    'medicine_requests' => $medicineRequests,
+                    'medicine_requests' => $medicineRequests->load('medicine'),
                 ];
             }
         })->filter()->values();
