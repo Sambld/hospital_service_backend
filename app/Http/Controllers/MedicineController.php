@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class MedicineController extends Controller
 {
-    public function medicine(  Medicine $medicine): JsonResponse
+    public function medicine(Medicine $medicine): JsonResponse
     {
 //        $this->authorize('view', $medicine);
         return response()->json(['data' => $medicine]);
@@ -19,6 +19,11 @@ class MedicineController extends Controller
     {
 //        $this->authorize('viewAny', Medicine::class);
         if ($request->has('q')) {
+            if ($request->has('np')) {
+                // search without pagination
+                return $this->search($request, false);
+
+            }
             return $this->search($request);
         }
         $medicines = Medicine::paginate(20);
@@ -78,15 +83,14 @@ class MedicineController extends Controller
         return $medicine;
     }
 
-    public function search(Request $request)
+    public function search(Request $request, $with_pagination = true)
     {
         $searchTerm = $request->input('q');
         $medicines = Medicine::where('name', 'LIKE', "%{$searchTerm}%")
             ->orWhere('category', 'LIKE', "%{$searchTerm}%")
-            ->orWhere('description', 'LIKE', "%{$searchTerm}%")
-            ->paginate();
+            ->orWhere('description', 'LIKE', "%{$searchTerm}%");
 
-
+        $medicines = $with_pagination ? $medicines->paginate() : $medicines->get();
 
         return response()->json(['data' => $medicines]);
     }
