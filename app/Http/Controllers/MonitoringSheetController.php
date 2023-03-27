@@ -33,7 +33,7 @@ class MonitoringSheetController extends Controller
         $this->authorize('belongings', [$monitoringSheet, $patient, $medicalRecord,]);
         $monitoringSheet = $this->add_abilities($monitoringSheet, $patient, $medicalRecord);
 
-        return response()->json(['data' => $monitoringSheet]);
+        return response()->json(['data' => $monitoringSheet->load('treatments')]);
     }
 
     public function index(Patient $patient, MedicalRecord $medicalRecord)
