@@ -43,7 +43,7 @@ class MonitoringSheetController extends Controller
         $response = $sheets->map(function ($sheet) use ($patient, $medicalRecord) {
             return $this->add_abilities($sheet, $patient, $medicalRecord);
         });
-        return response()->json(['data' => $response]);
+        return response()->json(['data' => $response->load('treatments')]);
     }
 
     /**
