@@ -26,9 +26,14 @@ class MedicalRecordController extends Controller
     {
 
         $this->authorize('belongings' ,  [$medicalRecord , $patient]);
-//        echo $patient->id . ' ' .  $record->patient_id;
         $medicalRecord['can_update'] = Auth::user()->can('update' , $medicalRecord);
         $medicalRecord['can_delete'] = Auth::user()->can('delete' , $medicalRecord);
+
+        // check if parametres withDoctor , if true load doctor data
+        if(\request()->has('withDoctor') && \request()->withDoctor == 'true')
+        {
+            $medicalRecord->load('assignedDoctor');
+        }
         return response()->json(['data' => $medicalRecord]) ;
 //        return response()->json(['data' => $medicalRecord->load([
 //            'monitoringSheets' => function ($query) {
@@ -50,7 +55,7 @@ class MedicalRecordController extends Controller
     public function store(Request $request, Patient $patient)
     {
 
-
+        error_log($request);
         $validatedData = $request->validate([
 
             'medical_specialty' => 'required|string|max:255',
@@ -84,7 +89,7 @@ class MedicalRecordController extends Controller
             'condition_description' => 'required|string|max:255',
             'state_upon_enter' => 'required|string|max:255',
             'standard_treatment' => 'required|string|max:255',
-            'state_upon_exit' => 'required|string|max:255',
+            'state_upon_exit' => 'nullable|string|max:255',
             'bed_number' => 'required|integer',
             'patient_entry_date' => 'required|date',
             'patient_leaving_date' => 'nullable|date|after_or_equal:patient_entry_date',

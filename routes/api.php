@@ -122,3 +122,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/patients/{patient}/medical-records/{medical_record}/medicine-requests/{request}' , [MedicineRequestController::class,'delete']);
 
 });
+
+Route::get('/test', function () {
+    return "test";
+});

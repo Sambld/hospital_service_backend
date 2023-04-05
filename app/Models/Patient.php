@@ -39,4 +39,9 @@ class Patient extends Model
     {
         return $this->first_name . ' ' . $this->last_name;
     }
+
+    public function inHospital()
+    {
+        return $this->medicalRecords()->where('patient_leaving_date', null)->count() > 0;
+    }
 }

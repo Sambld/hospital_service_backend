@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patient;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,10 @@ class PatientController extends Controller
     //
     public function patient(Patient $patient): JsonResponse
     {
+            if (\request()->has('withMedicalRecords')){
+                return response()->json(['data' => ['patient' => $patient->load('medicalRecords.assignedDoctor')]]);
 
+            }
             return response()->json(['data' => ['patient' => $patient]]);
 
 
@@ -19,27 +23,32 @@ class PatientController extends Controller
 
     public function index(): JsonResponse
     {
+        $inHospitalOnly = request()->has('inHospitalOnly');
 
-
-
-        if(\request()->has('q')){
-            $patients = $this->search(\request()->q);
+        if(request()->has('q')){
+            $patients = $this->search(request()->q, $inHospitalOnly);
             if ($patients->isEmpty()){
                 return response()->json([ 'message' => 'not found!' ],404);
-
+            } else {
+                return response()->json([ 'count' => $patients->count(), 'data' => $patients->toQuery()->orderByDesc('created_at')->paginate() ]);
             }
-            else{
-                return response()->json([ 'count' => $patients->count(),'data' => $patients->toQuery()->paginate() ]);
-
-            }
-
         }
-        return response()->json(['data' => Patient::withCount('medicalRecords')->paginate()]);
-//        return response()->json(['data' => Patient::withCount('medical_records')->get()]);
+
+        $patientsQuery = Patient::withCount('medicalRecords');
+        if ($inHospitalOnly) {
+            $patientsQuery->whereHas('medicalRecords', function ($query) {
+                $query->whereNull('patient_leaving_date');
+            });
+        }
+        $patientsQuery->orderByDesc('created_at');
+
+        return response()->json(['data' => $patientsQuery->paginate()]);
     }
+
 
     public function store(): JsonResponse
     {
+//        error_log(\request());
         $data = request()->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -91,15 +100,12 @@ class PatientController extends Controller
         return response()->json(['message' => 'Patient deleted successfully.']);
     }
 
-    public function search($searchQuery): \Illuminate\Database\Eloquent\Collection|array
+    public function search($searchQuery, $inHospitalOnly = false): \Illuminate\Database\Eloquent\Collection|array
     {
         $query = Patient::query();
         $words = preg_split('/\s+/', $searchQuery);
-        // Check if the request contains a search query
 
         foreach ($words as $word) {
-
-            // Use the LIKE operator to search for records with matching first or last name
             $query->where(function ($query) use ($word) {
                 $query->where('first_name', 'LIKE', '%' . $word . '%')
                     ->orWhere('last_name', 'LIKE', '%' . $word . '%')
@@ -107,10 +113,12 @@ class PatientController extends Controller
             });
         }
 
+        if ($inHospitalOnly) {
+            $query->whereHas('medicalRecords', function ($query) {
+                $query->whereNull('patient_leaving_date');
+            });
+        }
 
-
-
-        // Retrieve the matching records and return them
         return $query->get();
     }
 }
