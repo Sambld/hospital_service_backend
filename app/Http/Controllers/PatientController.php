@@ -19,9 +19,9 @@ class PatientController extends Controller
 
     public function index(): JsonResponse
     {
-
-
-
+        if(\request()->has('count')){
+            return response()->json(['count' => Patient::count()]);
+        }
         if(\request()->has('q')){
             $patients = $this->search(\request()->q);
             if ($patients->isEmpty()){
@@ -32,7 +32,6 @@ class PatientController extends Controller
                 return response()->json([ 'count' => $patients->count(),'data' => $patients->toQuery()->paginate() ]);
 
             }
-
         }
         return response()->json(['data' => Patient::withCount('medicalRecords')->paginate()]);
 //        return response()->json(['data' => Patient::withCount('medical_records')->get()]);

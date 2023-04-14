@@ -18,7 +18,7 @@ class MedicineRequestController extends Controller
     {
         $this->authorize('belongings', [$request, $patient, $medicalRecord]);
         $this->authorize('view', [$request, $medicalRecord]);
-//        $data = $this->add_abilities($request, $patient, $medicalRecord);
+        //        $data = $this->add_abilities($request, $patient, $medicalRecord);
         return response()->json(['data' => $request]);
     }
 
@@ -48,19 +48,69 @@ class MedicineRequestController extends Controller
             }
         })->filter()->values();
 
+        if (\request()->query('count')) {
+            return response()->json(['count' => $medicineRequestsPerRecord->count()]);
+        }
+
         $medicineRequestsPerRecord = CollectionHelper::paginate($medicineRequestsPerRecord, 15);
-//        return response()->json(['data' => $medicineRequestsPerRecord]);
+        //        return response()->json(['data' => $medicineRequestsPerRecord]);
         return response()->json(
             $medicineRequestsPerRecord
         );
     }
 
+    public function medicineRequestsQuery()
+    {
+        $query = MedicineRequest::query();
 
+        if (\request()->has('doctorId')) {
+            $query->whereHas('medicalRecord', function ($q) {
+                $q->where('user_id', \request()->get('doctorId'));
+            });
+        }
+
+        if (\request()->has('recordId')) {
+            $query->where('record_id', \request()->get('recordId'));
+        }
+
+        if (\request()->has('patientId')) {
+            $query->whereHas('medicalRecord', function ($q) {
+                $q->where('patient_id', \request()->get('patientId'));
+            });
+        }
+
+        if (\request()->has('status')) {
+            $query->where('status', \request()->get('status'));
+        }
+
+        if (\request()->has('startDate')) {
+            $query->whereDate('created_at', '>=', \request()->get('startDate'));
+        }
+
+        if (\request()->has('endDate')) {
+            $query->whereDate('created_at', '<=', \request()->get('endDate'));
+        }
+        $query->with(['medicalRecord.patient', 'medicine']);
+
+        if (\request()->has('count')) {
+            $medicineRequests = $query->selectRaw('medicine_id, sum(quantity) as quantity')
+                ->groupBy('medicine_id')
+                ->get();
+
+
+
+            return response()->json($medicineRequests);
+        }
+
+        $medicineRequests = $query->get();
+
+        return response()->json($medicineRequests);
+    }
 
     public function index(Patient $patient, MedicalRecord $medicalRecord)
     {
-        $this->authorize('viewAny', [MedicineRequest::class, $patient, $medicalRecord]);
-//        $this->authorize('create', [MedicineRequest::class, $patient, $medicalRecord]);
+        // $this->authorize('viewAny', [MedicineRequest::class, $patient, $medicalRecord]);
+        //        $this->authorize('create', [MedicineRequest::class, $patient, $medicalRecord]);
         $status = request()->query('status');
         $query = $medicalRecord->medicineRequests();
 
@@ -86,7 +136,7 @@ class MedicineRequestController extends Controller
             'medicine_id' => $medicine->id,
             'quantity' => $data['quantity'],
         ]);
-//        $data = $this->add_abilities($request, $patient, $medicalRecord);
+        //        $data = $this->add_abilities($request, $patient, $medicalRecord);
         return response()->json(['message' => 'medicine request created successfully.', 'data' => $request]);
     }
 
@@ -100,8 +150,6 @@ class MedicineRequestController extends Controller
         if ($request->status == 'Approved') {
 
             return response()->json(['message' => 'medicine request closed!'], 401);
-
-
         } else if (Auth::user()->isPharm()) {
 
             $data = \request()->validate([
@@ -116,7 +164,6 @@ class MedicineRequestController extends Controller
                 } else {
                     return response()->json(['message' => 'insufficient  resource.'], 401);
                 }
-
             }
             $request->update($data);
             return response()->json(['message' => 'medicine request updated successfully.']);
@@ -133,7 +180,7 @@ class MedicineRequestController extends Controller
             ]);
         }
 
-//        $data = $this->add_abilities($request, $patient, $medicalRecord);
+        //        $data = $this->add_abilities($request, $patient, $medicalRecord);
         return response()->json(['message' => 'medicine request updated successfully.', 'data' => $data]);
     }
 
