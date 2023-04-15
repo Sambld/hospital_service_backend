@@ -15,6 +15,26 @@ class UserController extends Controller
         return $user ? response()->json($user) : response()->json(['error' => 'user not found!']);
     }
 
+    public function indexAll(): JsonResponse
+    {
+        $users = User::all();
+        return response()->json($users);
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'first_name' => 'required|string|min:3|max:255',
+            'last_name' => 'required|string|min:3|max:255',
+            'username' => 'required|string|unique:users',
+            'role' => 'required|string|in:doctor,nurse,administrator,pharmacist',
+            'password' => 'required|string|min:6',
+        ]);
+        $data['password'] = bcrypt($data['password']);
+        $user = User::create($data);
+        return response()->json($user);
+    }
+
     public function update(Request $request, $id): JsonResponse
     {
 

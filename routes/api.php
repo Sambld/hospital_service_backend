@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/patients/{patient}/medical-records/{medical_record}' , [MedicalRecordController::class,'patientMedicalRecord']);
     Route::get('/patients/{patient}/medical-records' , [MedicalRecordController::class,'index']);
+    Route::get('/medical-records' , [MedicalRecordController::class,'records']);
 //    Route::get('/patients' , [\App\Http\Controllers\MedicalRecordController::class,'index']);
     Route::post('/patients/{patient}/medical-records' , [MedicalRecordController::class,'store']);
     Route::put('/patients/{patient}/medical-records/{medical_record}' , [MedicalRecordController::class,'update']);
@@ -117,6 +118,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/patients/{patient}/medical-records/{medical_record}/medicine-requests/{request}' , [MedicineRequestController::class,'request']);
     Route::get('/patients/{patient}/medical-records/{medical_record}/medicine-requests' , [MedicineRequestController::class,'index']);
     Route::get('/medicine-requests' , [MedicineRequestController::class,'pharmacy_index']);
+    Route::get('/medicine-requests/query' , [MedicineRequestController::class,'medicineRequestsQuery']);
     Route::post('/patients/{patient}/medical-records/{medical_record}/medicine-requests' , [MedicineRequestController::class,'store']);
     Route::put('/patients/{patient}/medical-records/{medical_record}/medicine-requests/{request}' , [MedicineRequestController::class,'update']);
     Route::delete('/patients/{patient}/medical-records/{medical_record}/medicine-requests/{request}' , [MedicineRequestController::class,'delete']);
