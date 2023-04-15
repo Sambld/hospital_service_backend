@@ -33,17 +33,17 @@ class MonitoringSheetController extends Controller
         $this->authorize('belongings', [$monitoringSheet, $patient, $medicalRecord,]);
         $monitoringSheet = $this->add_abilities($monitoringSheet, $patient, $medicalRecord);
 
-        return response()->json(['data' => $monitoringSheet->load('treatments')]);
+        return response()->json(['data' => $monitoringSheet->load(['filledBy','treatments'])]);
     }
 
     public function index(Patient $patient, MedicalRecord $medicalRecord)
     {
-        $this->authorize('create' , [MonitoringSheet::class,$patient, $medicalRecord]);
+        $this->authorize('view' , [MonitoringSheet::class,$patient, $medicalRecord]);
         $sheets = $medicalRecord->monitoringSheets()->orderBy('filling_date' , 'asc')->get();
         $response = $sheets->map(function ($sheet) use ($patient, $medicalRecord) {
             return $this->add_abilities($sheet, $patient, $medicalRecord);
         });
-        return response()->json(['data' => $response->load('treatments')]);
+        return response()->json(['data' => $response->load(['filledBy','treatments'])]);
     }
 
     /**
@@ -60,7 +60,7 @@ class MonitoringSheetController extends Controller
             'urine' => 'nullable|integer',
             'blood_pressure' => 'nullable|string',
             'weight' => 'nullable|integer',
-            'temperature' => 'nullable|integer',
+            'temperature' => 'nullable|string',
             'progress_report' => 'nullable|string',
             'filled_by_id' => 'nullable|exists:users,id',
         ]);
@@ -88,12 +88,14 @@ class MonitoringSheetController extends Controller
 //            return  $this->notFound();
 //        }
 
+
 //
+        error_log(request());
         $validatedData = \request()->validate([
             'urine' => 'nullable|integer',
             'blood_pressure' => 'nullable|string',
             'weight' => 'nullable|integer',
-            'temperature' => 'nullable|integer',
+            'temperature' => 'nullable|string',
             'progress_report' => 'nullable|string',
         ]);
 

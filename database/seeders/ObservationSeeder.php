@@ -12,6 +12,9 @@ class ObservationSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        // observations seeder
+
+
+
     }
 }

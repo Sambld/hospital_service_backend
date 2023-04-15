@@ -31,7 +31,7 @@ class MonitoringSheetFactory extends Factory
             'urine' => fake()->numberBetween(100, 1000),
             'blood_pressure' => fake()->numberBetween(80, 200). '/' . fake()->numberBetween(50, 150),
             'weight' => fake()->numberBetween(40, 200),
-            'temperature' => fake()->randomFloat(1, 35, 42),
+            'temperature' => fake()->numberBetween(35, 42),
             'progress_report' => fake()->paragraph(nbSentences: 1),
         ];
 //            'updated_by_id' => null ,

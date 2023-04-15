@@ -18,7 +18,11 @@ class MedicineController extends Controller
     public function index(Request $request): JsonResponse
     {
 //        $this->authorize('viewAny', Medicine::class);
-        if ($request->has('q')) {
+        if ($request->has("all")){
+            return response()->json(['data' => Medicine::all()]);
+        }
+
+if ($request->has('q')) {
             if ($request->has('np')) {
                 // search without pagination
                 return $this->search($request, false);

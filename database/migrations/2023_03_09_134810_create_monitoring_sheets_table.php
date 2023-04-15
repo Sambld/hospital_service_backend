@@ -20,8 +20,8 @@ return new class extends Migration
             $table->date('filling_date');
             $table->integer('urine')->nullable();
             $table->string('blood_pressure')->nullable();
-            $table->integer('weight')->nullable();
-            $table->integer('temperature')->nullable();
+            $table->double('weight')->nullable();
+            $table->string('temperature')->nullable();
             $table->string('progress_report')->nullable();
 
             $table->timestamps();

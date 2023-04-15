@@ -21,7 +21,7 @@ class ImageFactory extends Factory
     {
         $ce = ComplementaryExamination::inRandomOrder()->first();
         return [
-            'path' => 'images/test.png',
+            'path' => 'image.jpg',
             'observation_id' => $ce->id,
         ];
     }

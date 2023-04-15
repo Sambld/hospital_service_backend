@@ -21,9 +21,9 @@ class SheetPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, MonitoringSheet $monitoringSheet): bool
+    public function view(User $user, Patient $patient, MedicalRecord $medicalRecord): bool
     {
-        //
+        return $patient->id == $medicalRecord->patient_id;
     }
 
     /**
@@ -33,7 +33,7 @@ class SheetPolicy
     {
         error_log('create');
 //        dd($patient,$medicalRecord);
-        return $patient->id == $medicalRecord->patient_id;
+        return $patient->id == $medicalRecord->patient_id && $user->id == $medicalRecord->user_id;
     }
 
 

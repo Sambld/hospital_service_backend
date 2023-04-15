@@ -30,7 +30,7 @@ class ImageController extends Controller
         $this->authorize('create', [Image::class, $patient, $medicalRecord, $observation]);
 
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif',
         ]);
 
         $imagePath = $request->file('image')->store('public/images');
