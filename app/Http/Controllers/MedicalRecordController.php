@@ -29,6 +29,10 @@ class MedicalRecordController extends Controller
         //        echo $patient->id . ' ' .  $record->patient_id;
         $medicalRecord['can_update'] = Auth::user()->can('update', $medicalRecord);
         $medicalRecord['can_delete'] = Auth::user()->can('delete', $medicalRecord);
+        if(\request()->has('withDoctor') && \request()->withDoctor == 'true')
+        {
+            $medicalRecord->load('assignedDoctor');
+        }
         return response()->json(['data' => $medicalRecord]);
         //        return response()->json(['data' => $medicalRecord->load([
         //            'monitoringSheets' => function ($query) {

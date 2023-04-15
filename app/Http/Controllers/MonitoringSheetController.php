@@ -100,8 +100,12 @@ class MonitoringSheetController extends Controller
         ]);
 
 
+        if ($monitoringSheet->isFilled() && \auth()->user()->isNurse()) {
+            $validatedData['filled_by_id'] = auth()->user()->id;
 
-        $validatedData['filled_by_id'] = auth()->user()->id;
+        }else{
+            $validatedData['filled_by_id'] = \auth()->user()->id;
+        }
         $monitoringSheet->update($validatedData);
         $monitoringSheet->refresh();
         return response()->json(['message' => 'Monitoring sheet updated successfully.' , 'data' => $monitoringSheet]);
