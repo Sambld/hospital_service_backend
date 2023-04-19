@@ -23,6 +23,10 @@ class PatientController extends Controller
 
     public function index(): JsonResponse
     {
+        if(request()->has('count')){
+            return response()->json(['count' => Patient::count()]);
+        }
+
         $inHospitalOnly = request()->has('inHospitalOnly');
 
         if(request()->has('q')){

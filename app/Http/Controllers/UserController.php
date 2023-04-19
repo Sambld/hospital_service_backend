@@ -21,6 +21,12 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+    public function users(): JsonResponse
+    {
+        $users = User::all();
+        return response()->json(['data' => $users]);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -44,10 +50,10 @@ class UserController extends Controller
             return response()->json(['error' => 'user not found!']);
         }
         $data = $request->validate([
-            'first_name' => 'required|string|min:3|max:255',
-            'last_name' => 'required|string|min:3|max:255',
-            'username' => 'required|string|unique:users,username,' . $user->id,
-            'role' => 'required|string|in:doctor,nurse,administrator,pharmacist',
+            'first_name' => 'string|min:3|max:255',
+            'last_name' => 'string|min:3|max:255',
+            'username' => 'string|unique:users,username,' . $user->id,
+            'role' => 'string|in:doctor,nurse,administrator,pharmacist',
             'password' => 'nullable|string|min:6',
         ]);
         if (!empty($data['password'])) {
