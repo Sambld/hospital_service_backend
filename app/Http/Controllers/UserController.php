@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Psy\Util\Json;
 
 class UserController extends Controller
@@ -23,8 +24,21 @@ class UserController extends Controller
 
     public function users(): JsonResponse
     {
+        
+        if (request()->has('q')) {
+            $users = User::where('first_name', 'like', '%' . request()->get('q') . '%')
+            ->orWhere('last_name', 'like', '%' . request()->get('q') . '%')
+            ->orWhere(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', '%' . request()->get('q') . '%')
+            ->get();
+
+            if ($users->isEmpty()) {
+                return response()->json(['message' => 'not found!'], 404);
+            } else {
+                return response()->json(['count' => $users->count(), 'data' => $users->toQuery()->orderByDesc('created_at')->paginate(10)]);
+            }
+        }
         $users = User::all();
-        return response()->json(['data' => $users]);
+        return response()->json(['data' => $users->toQuery()->orderByDesc('created_at')->paginate(10)]);
     }
 
     public function store(Request $request): JsonResponse
@@ -50,10 +64,10 @@ class UserController extends Controller
             return response()->json(['error' => 'user not found!']);
         }
         $data = $request->validate([
-            'first_name' => 'string|min:3|max:255',
-            'last_name' => 'string|min:3|max:255',
-            'username' => 'string|unique:users,username,' . $user->id,
-            'role' => 'string|in:doctor,nurse,administrator,pharmacist',
+            'first_name' => 'nullable|string|min:3|max:255',
+            'last_name' => 'nullable|string|min:3|max:255',
+            'username' => 'nullable|string|unique:users,username,' . $user->id,
+            'role' => 'nullable|string|in:doctor,nurse,administrator,pharmacist',
             'password' => 'nullable|string|min:6',
         ]);
         if (!empty($data['password'])) {
@@ -66,7 +80,6 @@ class UserController extends Controller
         $user->update($data);
 
         return response()->json([$user]);
-
     }
 
     public function delete($id)
