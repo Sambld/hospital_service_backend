@@ -29,8 +29,7 @@ class MedicalRecordController extends Controller
         //        echo $patient->id . ' ' .  $record->patient_id;
         $medicalRecord['can_update'] = Auth::user()->can('update', $medicalRecord);
         $medicalRecord['can_delete'] = Auth::user()->can('delete', $medicalRecord);
-        if(\request()->has('withDoctor') && \request()->withDoctor == 'true')
-        {
+        if (\request()->has('withDoctor') && \request()->withDoctor == 'true') {
             $medicalRecord->load('assignedDoctor');
         }
         return response()->json(['data' => $medicalRecord]);
@@ -75,9 +74,12 @@ class MedicalRecordController extends Controller
         if (\request()->has('endDate')) {
             $query->whereDate('patient_entry_date', '<=', \request()->get('endDate'));
         }
-        $query->with('patient');
-        $query->orderBy('patient_entry_date', 'desc');
+        if (\request()->has('withPagination') && \request()->withPagination == 'true') {
+            $records = $query->with('patient')->orderBy('patient_entry_date', 'desc')->paginate(12);
+            return response()->json($records);
+        }
 
+        $query->with('patient')->orderBy('patient_entry_date', 'desc');
         $records = $query->get();
 
         return response()->json($records);
