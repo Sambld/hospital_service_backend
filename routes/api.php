@@ -113,7 +113,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/medicines/{medicine}' , [\App\Http\Controllers\MedicineController::class,'medicine']);
     Route::get('/medicines' , [\App\Http\Controllers\MedicineController::class,'index']);
-    Route::post('/medicines/' , [\App\Http\Controllers\MedicineController::class,'store']);
+    Route::post('/medicines' , [\App\Http\Controllers\MedicineController::class,'store']);
     Route::put('/medicines/{medicine}' , [\App\Http\Controllers\MedicineController::class,'update']);
     Route::delete('/medicines/{medicine}' , [\App\Http\Controllers\MedicineController::class,'delete']);
 

@@ -60,7 +60,7 @@ if ($request->has('q')) {
             'name' => 'string',
             'category' => 'string',
             'description' => 'string',
-            'price' => 'nullable|numeric',
+            'price' => 'nullable|integer',
             'quantity' => 'integer',
             'is_pharmaceutical' => 'boolean',
             'manufacturer' => 'nullable|string',

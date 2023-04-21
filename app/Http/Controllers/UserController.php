@@ -34,11 +34,11 @@ class UserController extends Controller
             if ($users->isEmpty()) {
                 return response()->json(['message' => 'not found!'], 404);
             } else {
-                return response()->json(['count' => $users->count(), 'data' => $users->toQuery()->orderByDesc('created_at')->paginate(10)]);
+                return response()->json(['count' => $users->count(), 'data' => $users->toQuery()->orderByDesc('created_at')->paginate(12)]);
             }
         }
         $users = User::all();
-        return response()->json(['data' => $users->toQuery()->orderByDesc('created_at')->paginate(10)]);
+        return response()->json(['data' => $users->toQuery()->orderByDesc('created_at')->paginate(12)]);
     }
 
     public function store(Request $request): JsonResponse
