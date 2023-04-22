@@ -125,6 +125,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/patients/{patient}/medical-records/{medical_record}/medicine-requests/{request}' , [MedicineRequestController::class,'update']);
     Route::delete('/patients/{patient}/medical-records/{medical_record}/medicine-requests/{request}' , [MedicineRequestController::class,'delete']);
 
+
+    Route::get('monitoring-sheets/latest-updates' , [\App\Http\Controllers\StatisticsController::class,'doctorMonitoringSheetsLatestUpdates']);
 });
 
 Route::get('/test', function () {

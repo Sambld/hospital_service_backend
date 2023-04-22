@@ -31,17 +31,17 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        Patient::factory(20)->create();
+        Patient::factory(100)->create();
         User::factory(6)->create();
         $sam = new User(['first_name' => 'sam' , 'last_name' => 'samo' , 'username' => 'sam' , 'password' => bcrypt('samisamo') , 'role' => 'doctor']);
         $sam->save();
         Medicine::factory(100)->create();
-        MedicalRecord::factory(30)->has(MandatoryDeclaration::factory())->create();
-        MonitoringSheet::factory(200)->has(Treatment::factory()->count(5))->create();
-        ComplementaryExamination::factory(10)->create();
-        Observation::factory(10)->create();
-        Image::factory(10)->create();
-        MedicineRequest::factory()->count(20)->create();
+        MedicalRecord::factory(200)->has(MandatoryDeclaration::factory())->create();
+        MonitoringSheet::factory(10000)->has(Treatment::factory()->count(5))->create();
+        ComplementaryExamination::factory(300)->create();
+        Observation::factory(300)->create();
+        Image::factory(600)->create();
+        MedicineRequest::factory()->count(4000)->create();
 
 
 

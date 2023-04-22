@@ -27,7 +27,10 @@ class ComplementaryExaminationController extends Controller
     public function index(Patient $patient , MedicalRecord $medicalRecord ) : JsonResponse
     {
         $this->authorize('create', [ComplementaryExamination::class ,$patient, $medicalRecord]);
+        // order by createdAt desc
+//        $medicalRecord->complementaryExaminations = $medicalRecord->complementaryExaminations->sortByDesc('created_at');
         $data = $this->add_abilities($medicalRecord->complementaryExaminations, $patient, $medicalRecord);
+
 
         return response()->json(['data' => $data]);
 

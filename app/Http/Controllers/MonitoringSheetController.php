@@ -36,6 +36,8 @@ class MonitoringSheetController extends Controller
         return response()->json(['data' => $monitoringSheet->load(['filledBy','treatments'])]);
     }
 
+
+
     public function index(Patient $patient, MedicalRecord $medicalRecord)
     {
         $this->authorize('view' , [MonitoringSheet::class,$patient, $medicalRecord]);

@@ -6,6 +6,7 @@ use App\Models\Patient;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PatientController extends Controller
 {
@@ -27,6 +28,9 @@ class PatientController extends Controller
             return response()->json(['count' => Patient::count()]);
         }
 
+        if (\request()->has('onlyMyPatientsCount')){
+            return response()->json(['count' => Auth::user()->medicalRecords()->count()]);
+        }
         $inHospitalOnly = request()->has('inHospitalOnly');
 
         if(request()->has('q')){
@@ -37,6 +41,7 @@ class PatientController extends Controller
                 return response()->json([ 'count' => $patients->count(), 'data' => $patients->toQuery()->orderByDesc('created_at')->paginate() ]);
             }
         }
+
 
         $patientsQuery = Patient::withCount('medicalRecords');
         if ($inHospitalOnly) {

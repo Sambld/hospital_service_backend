@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Psy\Util\Json;
 
 class MedicalRecordController extends Controller
@@ -29,7 +30,8 @@ class MedicalRecordController extends Controller
         //        echo $patient->id . ' ' .  $record->patient_id;
         $medicalRecord['can_update'] = Auth::user()->can('update', $medicalRecord);
         $medicalRecord['can_delete'] = Auth::user()->can('delete', $medicalRecord);
-        if (\request()->has('withDoctor') && \request()->withDoctor == 'true') {
+        if(\request()->has('withDoctor') && \request()->withDoctor == 'true')
+        {
             $medicalRecord->load('assignedDoctor');
         }
         return response()->json(['data' => $medicalRecord]);
@@ -49,8 +51,22 @@ class MedicalRecordController extends Controller
 
     public function records(): JsonResponse
     {
+        DB::enableQueryLog();
+
         $query = MedicalRecord::query();
 
+        if (\request()->has('q')) {
+
+            $search = \request()->get('q');
+            $query->where(function ($subquery) use ($search) {
+                $subquery->whereHas('patient', function ($q) use ($search) {
+                    $q->where('first_name', 'like', '%' . $search . '%')
+                        ->orWhere('last_name', 'like', '%' . $search . '%');
+                });
+            });
+
+
+        }
         if (\request()->has('doctorId')) {
             $query->where('user_id', \request()->get('doctorId'));
         }
@@ -59,10 +75,15 @@ class MedicalRecordController extends Controller
                 $q->where('filled_by_id', \request()->get('nurseId'));
             });
         }
+        // mine records only
+        if (\request()->has('mineOnly')) {
+            $query->where('user_id', Auth::user()->id);
+        }
         if (\request()->has('patientId')) {
             $query->where('patient_id', \request()->get('patientId'));
         }
         if (\request()->has('isActive')) {
+            error_log('isActive')   ;
             $query->whereNull('patient_leaving_date');
         }
         if (\request()->has('isInactive')) {
@@ -74,12 +95,17 @@ class MedicalRecordController extends Controller
         if (\request()->has('endDate')) {
             $query->whereDate('patient_entry_date', '<=', \request()->get('endDate'));
         }
+
+
+        $query->with(['patient', 'assignedDoctor']);
+        $query->orderBy('patient_entry_date', 'desc');
         if (\request()->has('withPagination') && \request()->withPagination == 'true') {
             $records = $query->with('patient')->orderBy('patient_entry_date', 'desc')->paginate(12);
             return response()->json($records);
         }
 
-        $query->with('patient')->orderBy('patient_entry_date', 'desc');
+
+
         $records = $query->get();
 
         return response()->json($records);
@@ -144,18 +170,18 @@ class MedicalRecordController extends Controller
         return response()->json(['message' => 'Medical record deleted successfully.']);
     }
 
-    //    public function patientNotFound(): JsonResponse
-    //    {
-    //        return response()->json(['error' => 'Patient not found.'] , 404);
-    //    }
-    //
-    //    public function medicalRecordNotFound(): JsonResponse
-    //    {
-    //        return response()->json(['error' => 'Medical record not found.'] , 404);
-    //    }
-    //    public function notAuthorized(): JsonResponse
-    //    {
-    //        return response()->json(['error' => 'Not Authorized.'],401);
-    //    }
+
+
+    //function to search for medical records by standard_treatment or condition_description , to use in public function records(): JsonResponse
+    public function search($query , $search)
+    {
+
+
+        $query = $query->where('standard_treatment', 'like', '%' . $search . '%')
+            ->orWhere('condition_description', 'like', '%' . $search . '%');
+        return $query;
+    }
+
+
 
 }
