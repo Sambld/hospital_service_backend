@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @method static find($medical_record_id)
+ * @method static inRandomOrder()
  */
 class MedicalRecord extends Model
 {

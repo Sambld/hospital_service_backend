@@ -20,20 +20,37 @@ class MonitoringSheetFactory extends Factory
     public function definition(): array
     {
 
-//        $medicalRecord = MedicalRecord::inRandomOrder()->first();
         $record = MedicalRecord::inRandomOrder()->first();
-//        $staff = Staff::inRandomOrder()->first();
         $staff = User::all()->where('role','nurse')->toQuery()->inRandomOrder()->first();
-        return [
-            'record_id' => $record->id,
-            'filled_by_id' => fake()->boolean(60) ? $staff->id : null ,
-            'filling_date' => fake()->dateTimeBetween('now', '+7 days')->format('Y-m-d'),
-            'urine' => fake()->numberBetween(100, 1000),
-            'blood_pressure' => fake()->numberBetween(80, 200). '/' . fake()->numberBetween(50, 150),
-            'weight' => fake()->numberBetween(40, 200),
-            'temperature' => fake()->numberBetween(35, 42),
-            'progress_report' => fake()->paragraph(nbSentences: 1),
-        ];
+        $isFilled = fake()->boolean(60);
+        if ($isFilled){
+            return [
+                'record_id' => $record->id,
+                'filled_by_id' => $staff->id,
+                'filling_date' => fake()->dateTimeBetween('-7 days')->format('Y-m-d'),
+                'urine' => fake()->numberBetween(100, 1000),
+                'blood_pressure' => fake()->numberBetween(80, 200). '/' . fake()->numberBetween(50, 150),
+                'weight' => fake()->numberBetween(40, 200),
+                'temperature' => fake()->numberBetween(35, 42),
+                'progress_report' => fake()->paragraph(nbSentences: 1),
+            ];
+        }else{
+            return [
+                'record_id' => $record->id,
+                'filled_by_id' => null ,
+                'filling_date' => fake()->dateTimeBetween('now', '+7 days')->format('Y-m-d'),
+                'urine' => null,
+                'blood_pressure' => null,
+                'weight' => null,
+                'temperature' => null,
+                'progress_report' => null,
+            ];
+        }
+
+
+
+
+
 //            'updated_by_id' => null ,
     }
 }

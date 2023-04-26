@@ -23,15 +23,15 @@ class MedicalRecordController extends Controller
 
         return \response()->json($patient->medicalRecords()->orderBy('patient_entry_date', 'desc')->paginate());
     }
+
     public function patientMedicalRecord(Patient $patient, MedicalRecord $medicalRecord): JsonResponse
     {
 
-        $this->authorize('belongings',  [$medicalRecord, $patient]);
+        $this->authorize('belongings', [$medicalRecord, $patient]);
         //        echo $patient->id . ' ' .  $record->patient_id;
         $medicalRecord['can_update'] = Auth::user()->can('update', $medicalRecord);
         $medicalRecord['can_delete'] = Auth::user()->can('delete', $medicalRecord);
-        if(\request()->has('withDoctor') && \request()->withDoctor == 'true')
-        {
+        if (\request()->has('withDoctor') && \request()->withDoctor == 'true') {
             $medicalRecord->load('assignedDoctor');
         }
         return response()->json(['data' => $medicalRecord]);
@@ -59,10 +59,9 @@ class MedicalRecordController extends Controller
 
             $search = \request()->get('q');
             $query->where(function ($subquery) use ($search) {
-                $subquery->whereHas('patient', function ($q) use ($search) {
-                    $q->where('first_name', 'like', '%' . $search . '%')
-                        ->orWhere('last_name', 'like', '%' . $search . '%');
-                });
+                $subquery->where('standard_treatment', 'like', '%' . $search . '%')
+                    ->orWhere('condition_description', 'like', '%' . $search . '%')
+                    ->orWhere('id', $search );
             });
 
 
@@ -83,7 +82,7 @@ class MedicalRecordController extends Controller
             $query->where('patient_id', \request()->get('patientId'));
         }
         if (\request()->has('isActive')) {
-            error_log('isActive')   ;
+            error_log('isActive');
             $query->whereNull('patient_leaving_date');
         }
         if (\request()->has('isInactive')) {
@@ -103,7 +102,6 @@ class MedicalRecordController extends Controller
             $records = $query->with('patient')->orderBy('patient_entry_date', 'desc')->paginate(12);
             return response()->json($records);
         }
-
 
 
         $records = $query->get();
@@ -137,11 +135,10 @@ class MedicalRecordController extends Controller
     }
 
 
-
     public function update(Patient $patient, MedicalRecord $medicalRecord): JsonResponse
     {
 
-        $this->authorize('belongings',  [$medicalRecord, $patient]);
+        $this->authorize('belongings', [$medicalRecord, $patient]);
         $this->authorize('update', $medicalRecord);
 
         $validatedData = \request()->validate([
@@ -171,9 +168,8 @@ class MedicalRecordController extends Controller
     }
 
 
-
     //function to search for medical records by standard_treatment or condition_description , to use in public function records(): JsonResponse
-    public function search($query , $search)
+    public function search($query, $search)
     {
 
 
@@ -181,7 +177,6 @@ class MedicalRecordController extends Controller
             ->orWhere('condition_description', 'like', '%' . $search . '%');
         return $query;
     }
-
 
 
 }

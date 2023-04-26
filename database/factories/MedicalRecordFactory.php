@@ -20,19 +20,19 @@ class MedicalRecordFactory extends Factory
     public function definition(): array
     {
         $patient = Patient::inRandomOrder()->first();
-        $user = User::inRandomOrder()->first();
+        $user = User::where('role' , 'doctor')->inRandomOrder()->first();
         return [
             //
             'patient_id' => $patient->id,
             'user_id' => $user->id,
-            'medical_specialty' => fake()->randomElement(['cardiology', 'neurology', 'oncology', 'orthopedics']),
+            'medical_specialty' => 'infectious diseases',
             'condition_description' => fake()->sentence(),
             'state_upon_enter' => fake()->randomElement(['stable', 'critical', 'serious']),
             'standard_treatment' => fake()->sentence(),
             'state_upon_exit' => fake()->randomElement(['recovered', 'improved', 'stable']),
             'bed_number' => fake()->numberBetween(1, 100),
             'patient_entry_date' => fake()->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
-            'patient_leaving_date' => fake()->boolean(80) ? fake()->dateTimeBetween('now', '+1 year')->format('Y-m-d') : null,
+            'patient_leaving_date' => fake()->boolean(80) ? fake()->dateTimeBetween('now', '+1 month')->format('Y-m-d') : null,
         ];
     }
 }
