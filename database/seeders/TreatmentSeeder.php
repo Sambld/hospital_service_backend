@@ -12,6 +12,7 @@ class TreatmentSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+
+
     }
 }

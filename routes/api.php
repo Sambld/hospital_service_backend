@@ -199,4 +199,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
+Route::get('/ai-search', [\App\Http\Controllers\AiController::class, 'index']);
+
+
 
