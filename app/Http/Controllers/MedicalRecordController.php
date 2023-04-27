@@ -82,7 +82,6 @@ class MedicalRecordController extends Controller
             $query->where('patient_id', \request()->get('patientId'));
         }
         if (\request()->has('isActive')) {
-            error_log('isActive');
             $query->whereNull('patient_leaving_date');
         }
         if (\request()->has('isInactive')) {

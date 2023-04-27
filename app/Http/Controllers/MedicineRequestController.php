@@ -35,7 +35,7 @@ class MedicineRequestController extends Controller
             $unrespondedRequests = $medicineRequests->where('status', 'Pending');
             $all_requests_responded_to = $unrespondedRequests->isEmpty();
 
-            if (($status == 'open' && !$all_requests_responded_to) || ($status == 'closed' && $all_requests_responded_to) || !$status) {
+            if (($status == 'Approved' && !$all_requests_responded_to) || ($status == 'Rejected' && $all_requests_responded_to) || !$status) {
                 $medicineRequests = $medicineRequests->sortByDesc('created_at');
                 return [
                     'medical_record_id' => $record->id,

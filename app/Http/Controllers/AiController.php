@@ -18,14 +18,14 @@ class AiController extends Controller
         #
         # users(id, first_name, last_name, username, password, role, created_at, updated_at)
         # patients(id, first_name, last_name, birth_date, place_of_birth, gender, address, nationality, phone_number, family_situation, emergency_contact_name, emergency_contact_number, created_at, updated_at)
-        # medical_records(id, patient_id, user_id, medical_specialty, condition_description, state_upon_enter, standard_treatment, state_upon_exit, bed_number, patient_entry_date, patient_leaving_date, created_at, updated_at)
         # complementary_examinations(id, type, medical_record_id, result, created_at, updated_at)
         # observations(id, medical_record_id, name, created_at, updated_at)
+        # medical_records(id, patient_id, user_id, medical_specialty, condition_description, state_upon_enter, standard_treatment, state_upon_exit, bed_number, patient_entry_date, patient_leaving_date, created_at, updated_at)
         # images(id, path, observation_id, created_at, updated_at)
         # monitoring_sheets(id, record_id, filled_by_id, filling_date, urine, blood_pressure, weight, temperature, progress_report, created_at, updated_at)
         # medicines(id, name, category, description, price, quantity, is_pharmaceutical, manufacturer, supplier, expiration_date, created_at, updated_at)
         # treatments(id, monitoring_sheet_id, medicine_id, name, dose, type, created_at, updated_at)
-        # medicine_requests(id, user_id, record_id, medicine_id, quantity, status, review, created_at, updated_at)
+        # medicine_requests(id, user_id, record_id, medicine_id, quantity, status, review, created_at, updated_at)  // status: Pending, Approved, Rejected
         # mandatory_declaration(id, diagnosis, detail, medical_record_id, created_at, updated_at)
         #
         ### A query to get  ";
@@ -72,7 +72,8 @@ class AiController extends Controller
                 return response()->json(["message" => "You are not allowed to do this query", 'result' => $query], 200, array(), JSON_PRETTY_PRINT);
             }
         } catch (\Exception $e) {
-            return response()->json(["message" => "You are not allowed to do this query", 'result' => $query], 200, array(), JSON_PRETTY_PRINT);
+            error_log($e->getMessage());
+            return response()->json(["message" => "internal error", 'result' => $query], 500, array(), JSON_PRETTY_PRINT);
         }
     }
 
