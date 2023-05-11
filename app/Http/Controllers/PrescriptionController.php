@@ -25,7 +25,7 @@ class PrescriptionController extends Controller
         $this->authorize('index', [Prescription::class, $patient, $medicalRecord]);
         $prescriptions = $medicalRecord->prescriptions;
 
-        return response()->json([$prescriptions->load('medicineRequests.medicine')]);
+        return response()->json($prescriptions->load('medicineRequests.medicine'));
 
     }
 
@@ -33,7 +33,7 @@ class PrescriptionController extends Controller
     {
         $this->authorize('belongings', [Prescription::class, $prescription, $patient, $medicalRecord]);
 //        $this->authorize('view', [Prescription::class, $medicalRecord]);
-        return response()->json(['data' => $prescription->load('medicineRequests.medicine')]);
+        return response()->json($prescription->load('medicineRequests.medicine'));
 
     }
 

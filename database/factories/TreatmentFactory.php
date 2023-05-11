@@ -26,7 +26,7 @@ class TreatmentFactory extends Factory
         return [
             'monitoring_sheet_id' => $sheet->id,
             'medicine_id' => $medicine->id,
-            'name' => fake()->word,
+            'name' => $medicine->name,
             'dose' => fake()->numberBetween(1, 10) . ' ' . fake()->randomElement(['mg', 'g', 'mL']),
             'type' => fake()->randomElement(['Oral', 'Injection', 'Topical']),
         ];
