@@ -24,7 +24,10 @@ class UserController extends Controller
 
     public function users(): JsonResponse
     {
-        
+        if(\request()->has('count')) {
+            $query = User::selectRaw('count(*) as count, role')->groupBy('role')->get();
+            return response()->json($query);
+        }
         if (request()->has('q')) {
             $users = User::where('first_name', 'like', '%' . request()->get('q') . '%')
             ->orWhere('last_name', 'like', '%' . request()->get('q') . '%')

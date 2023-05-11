@@ -145,7 +145,7 @@ class MedicalRecordController extends Controller
             'condition_description' => 'required|string|max:255',
             'state_upon_enter' => 'required|string|max:255',
             'standard_treatment' => 'required|string|max:255',
-            'state_upon_exit' => 'required|string|max:255',
+            'state_upon_exit' => 'nullable|string|max:255',
             'bed_number' => 'required|integer',
             'patient_entry_date' => 'required|date',
             'patient_leaving_date' => 'nullable|date|after_or_equal:patient_entry_date',
