@@ -12,6 +12,7 @@ use App\Models\MedicineRequest;
 use App\Models\MonitoringSheet;
 use App\Models\Observation;
 use App\Models\Patient;
+use App\Models\Prescription;
 use App\Models\Treatment;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -31,17 +32,18 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        Patient::factory(100)->create();
-        User::factory(15)->create();
+        Patient::factory(50)->create();
+        User::factory(10)->create();
         $sam = new User(['first_name' => 'sam' , 'last_name' => 'samo' , 'username' => 'sam' , 'password' => bcrypt('samisamo') , 'role' => 'doctor']);
         $sam->save();
         Medicine::factory(100)->create();
         MedicalRecord::factory(200)->has(MandatoryDeclaration::factory())->create();
-        MonitoringSheet::factory(3000)->has(Treatment::factory()->count(5))->create();
+        MonitoringSheet::factory(500)->has(Treatment::factory()->count(5))->create();
         ComplementaryExamination::factory(300)->create();
         Observation::factory(300)->create();
         Image::factory(600)->create();
-        MedicineRequest::factory()->count(2000)->create();
+        Prescription::factory(300)->has(MedicineRequest::factory()->count(5))->create();
+//        MedicineRequest::factory()->count(2000)->create();
 
 
 

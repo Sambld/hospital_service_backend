@@ -13,15 +13,15 @@ class MedicineRequest extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['medicine_id' , 'quantity' , 'user_id' , 'record_id' , 'status' , 'review'];
+    protected $fillable = ['medicine_id' , 'quantity' , 'user_id' , 'record_id' , 'status' , 'review' , 'prescription_id'];
     public function doctor() : BelongsTo
     {
         return $this->belongsTo(User::class , 'user_id');
     }
 
-    public function medicalRecord() : BelongsTo
+    public function prescription() : BelongsTo
     {
-        return $this->belongsTo(MedicalRecord::class , 'record_id' );
+        return $this->belongsTo(Prescription::class , 'prescription_id');
     }
 
     public function medicine() : BelongsTo

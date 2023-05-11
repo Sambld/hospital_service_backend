@@ -9,6 +9,7 @@ use App\Http\Controllers\MedicineRequestController;
 use App\Http\Controllers\MonitoringSheetController;
 use App\Http\Controllers\ObservationController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\TreatmentController;
 use App\Http\Controllers\UserController;
 use App\Models\Treatment;
@@ -88,8 +89,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/patients/{patient}/medical-records/{medical_record}/mandatory-declaration', [MandatoryDeclarationController::class, 'update']);
         Route::delete('/patients/{patient}/medical-records/{medical_record}/mandatory-declaration', [MandatoryDeclarationController::class, 'delete']);
 
+        // prescription management
+        Route::post('/patients/{patient}/medical-records/{medical_record}/prescriptions', [PrescriptionController::class, 'store']);
+        Route::put('/patients/{patient}/medical-records/{medical_record}/prescriptions/{prescription}', [PrescriptionController::class, 'update']);
+        Route::delete('/patients/{patient}/medical-records/{medical_record}/prescriptions/{prescription}', [PrescriptionController::class, 'delete']);
+
+
         // medicine request management
-        Route::post('/patients/{patient}/medical-records/{medical_record}/medicine-requests', [MedicineRequestController::class, 'store']);
+        Route::post('/patients/{patient}/medical-records/{medical_record}/prescriptions/{prescription}/medicine-requests', [MedicineRequestController::class, 'store']);
 
         // statistics
         Route::get('/monitoring-sheets/latest-updates', [\App\Http\Controllers\StatisticsController::class, 'doctorMonitoringSheetsLatestUpdates']);
@@ -144,13 +151,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/patients/{patient}/medical-records/{medical_record}/mandatory-declaration', [MandatoryDeclarationController::class, 'index']);
 
 
+        // prescription view
+        Route::get('/patients/{patient}/medical-records/{medical_record}/prescriptions', [PrescriptionController::class, 'index']);
+        Route::get('/patients/{patient}/medical-records/{medical_record}/prescriptions/{prescription}', [PrescriptionController::class, 'prescription']);
+        Route::get('/patients/{patient}/medical-records/{medical_record}/prescriptions/{prescription}/pdf', [PrescriptionController::class, 'prescriptionPDF']);
 
     });
 
     Route::middleware('DoctorOrPharmacist')->group(function (){
         // medicine request management
-        Route::put('/patients/{patient}/medical-records/{medical_record}/medicine-requests/{request}', [MedicineRequestController::class, 'update']);
-        Route::delete('/patients/{patient}/medical-records/{medical_record}/medicine-requests/{request}', [MedicineRequestController::class, 'delete']);
+        Route::put('/patients/{patient}/medical-records/{medical_record}/prescriptions/{prescription}/medicine-requests/{request}', [MedicineRequestController::class, 'update']);
+        Route::delete('/patients/{patient}/medical-records/{medical_record}/prescriptions/{prescription}/medicine-requests/{request}', [MedicineRequestController::class, 'delete']);
 
     });
 
@@ -162,6 +173,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
             Route::get('/medicine-requests', [MedicineRequestController::class, 'pharmacy_index']);
             Route::get('/medicine-requests/query', [MedicineRequestController::class, 'medicineRequestsQuery']);
+
+            Route::get('/prescriptions', [PrescriptionController::class, 'pharmacyIndex']);
+
 
 
 
@@ -180,8 +194,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/medicines/{medicine}', [\App\Http\Controllers\MedicineController::class, 'medicine']);
     Route::get('/medicines', [\App\Http\Controllers\MedicineController::class, 'index']);
 
-    Route::get('/patients/{patient}/medical-records/{medical_record}/medicine-requests/{request}', [MedicineRequestController::class, 'request']);
-    Route::get('/patients/{patient}/medical-records/{medical_record}/medicine-requests', [MedicineRequestController::class, 'index']);
+    Route::get('/patients/{patient}/medical-records/{medical_record}/prescriptions/{prescription}/medicine-requests/{request}', [MedicineRequestController::class, 'request']);
+    Route::get('/patients/{patient}/medical-records/{medical_record}/prescriptions/{prescription}/medicine-requests', [MedicineRequestController::class, 'index']);
 
 
 

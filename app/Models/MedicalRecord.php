@@ -41,9 +41,9 @@ class MedicalRecord extends Model
     {
         return $this->hasMany(ComplementaryExamination::class );
     }
-    public function medicineRequests() : HasMany
+    public function prescriptions() : HasMany
     {
-        return $this->hasMany(MedicineRequest::class , 'record_id');
+        return $this->hasMany(Prescription::class , 'medical_record_id');
     }
     public function observations() : HasMany
     {

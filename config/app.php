@@ -1,8 +1,23 @@
 <?php
 
+use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Facade;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 return [
+
+    /*
+     * hospital information
+     *
+     */
+    'hospital' => [
+        'name' => 'Hôpital Medjoub Said de Taher',
+        'address' => 'Rue Boucherka prolongée Taher,Jijel,Algérie,18200',
+        'phone' => ' 034 55 83 63. 034 55 83 64.',
+        'email' => 'Hospital Email',
+        'logo' => 'Hospital Logo',
+        'website' => 'Hospital Website',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -16,6 +31,8 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+
+
 
     /*
     |--------------------------------------------------------------------------
@@ -181,6 +198,9 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
+        SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
+
 
         /*
          * Package Service Providers...
@@ -207,9 +227,11 @@ return [
     | the aliases are "lazy" loaded so they don't hinder performance.
     |
     */
-
     'aliases' => Facade::defaultAliases()->merge([
+        'PDF' => Dompdf::class,
         // 'ExampleClass' => App\Example\ExampleClass::class,
+        'QrCode' => QrCode::class,
+
     ])->toArray(),
 
 ];

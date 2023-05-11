@@ -7,6 +7,7 @@ use App\Models\MedicalRecord;
 use App\Models\Medicine;
 use App\Models\MedicineRequest;
 use App\Models\Patient;
+use App\Models\Prescription;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,9 +15,9 @@ use function GuzzleHttp\Promise\all;
 
 class MedicineRequestController extends Controller
 {
-    public function request(Patient $patient, MedicalRecord $medicalRecord, MedicineRequest $request): JsonResponse
+    public function request(Patient $patient, MedicalRecord $medicalRecord, Prescription $prescription, MedicineRequest $request): JsonResponse
     {
-        $this->authorize('belongings', [$request, $patient, $medicalRecord]);
+        $this->authorize('belongings', [$request, $patient, $medicalRecord , $prescription]);
         $this->authorize('view', [$request, $medicalRecord]);
         //        $data = $this->add_abilities($request, $patient, $medicalRecord);
         return response()->json(['data' => $request]);
@@ -24,7 +25,7 @@ class MedicineRequestController extends Controller
 
     public function pharmacy_index()
     {
-        $status = \request()->query('status');
+        $status = request()->query('status');
 
         $records = MedicalRecord::with(['medicineRequests' => function ($query) {
             $query->orderBy('created_at', 'desc');
@@ -107,12 +108,12 @@ class MedicineRequestController extends Controller
         return response()->json($medicineRequests);
     }
 
-    public function index(Patient $patient, MedicalRecord $medicalRecord)
+    public function index(Patient $patient, MedicalRecord $medicalRecord , Prescription $prescription): JsonResponse
     {
         // $this->authorize('viewAny', [MedicineRequest::class, $patient, $medicalRecord]);
         //        $this->authorize('create', [MedicineRequest::class, $patient, $medicalRecord]);
         $status = request()->query('status');
-        $query = $medicalRecord->medicineRequests();
+        $query = $prescription->medicineRequests();
 
         if ($status) {
             $query = $query->where('status', $status);
@@ -123,28 +124,29 @@ class MedicineRequestController extends Controller
         return response()->json(['data' => $requests->load('medicine')]);
     }
 
-    public function store(Patient $patient, MedicalRecord $medicalRecord)
+    public function store(Patient $patient, MedicalRecord $medicalRecord , Prescription $prescription)
     {
-        $this->authorize('create', [MedicineRequest::class, $patient, $medicalRecord]);
+        $this->authorize('create', [MedicineRequest::class, $patient, $medicalRecord , $prescription]);
+
         $data = \request()->validate([
             'medicine_id' => 'required|exists:medicines,id',
             'quantity' => 'required|integer',
         ]);
-        $medicine = Medicine::find($data['medicine_id']);
-        $request = $medicalRecord->medicineRequests()->create([
+        $request = $prescription->medicineRequests()->create([
             'user_id' => Auth::user()->id,
-            'medicine_id' => $medicine->id,
+            'prescription_id' => $prescription->id,
+            'medicine_id' => $data['medicine_id'],
             'quantity' => $data['quantity'],
         ]);
         //        $data = $this->add_abilities($request, $patient, $medicalRecord);
         return response()->json(['message' => 'medicine request created successfully.', 'data' => $request]);
     }
 
-    public function update(Patient $patient, MedicalRecord $medicalRecord, MedicineRequest $request)
+    public function update(Patient $patient, MedicalRecord $medicalRecord , Prescription $prescription, MedicineRequest $request)
     {
 
 
-        $this->authorize('belongings', [$request, $patient, $medicalRecord]);
+        $this->authorize('belongings', [$request, $patient, $medicalRecord , $prescription]);
         $this->authorize('update', [MedicineRequest::class, $medicalRecord]);
 
         if ($request->status == 'Approved') {
@@ -184,9 +186,10 @@ class MedicineRequestController extends Controller
         return response()->json(['message' => 'medicine request updated successfully.', 'data' => $data]);
     }
 
-    public function delete(Patient $patient, MedicalRecord $medicalRecord, MedicineRequest $request)
+    public function delete(Patient $patient, MedicalRecord $medicalRecord, Prescription $prescription, MedicineRequest $request)
     {
 
+        $this->authorize('belongings', [$request, $patient, $medicalRecord , $prescription]);
         $this->authorize('delete', [$request, $patient, $medicalRecord]);
         $request->delete();
         return response()->json(['message' => 'medicine request deleted successfully.']);

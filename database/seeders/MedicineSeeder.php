@@ -12,6 +12,6 @@ class MedicineSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+
     }
 }

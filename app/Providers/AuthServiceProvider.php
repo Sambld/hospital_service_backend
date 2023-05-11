@@ -12,6 +12,7 @@ use App\Models\Medicine;
 use App\Models\MedicineRequest;
 use App\Models\MonitoringSheet;
 use App\Models\Observation;
+use App\Models\Prescription;
 use App\Models\Treatment;
 use App\Policies\ComplementaryExaminationPolicy;
 use App\Policies\ImagePolicy;
@@ -20,6 +21,7 @@ use App\Policies\MedicalRecordPolicy;
 use App\Policies\MedicinePolicy;
 use App\Policies\MedicineRequestPolicy;
 use App\Policies\ObservationPolicy;
+use App\Policies\PrescriptionPolicy;
 use App\Policies\SheetPolicy;
 use App\Policies\TreatmentPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -40,7 +42,8 @@ class AuthServiceProvider extends ServiceProvider
         Medicine::class => MedicinePolicy::class,
         MedicineRequest::class => MedicineRequestPolicy::class,
         Image::class => ImagePolicy::class,
-        MandatoryDeclaration::class => MandatoryDeclarationPolicy::class
+        MandatoryDeclaration::class => MandatoryDeclarationPolicy::class,
+        Prescription::class => PrescriptionPolicy::class
 
     ];
 

@@ -16,9 +16,15 @@ class MedicineFactory extends Factory
      */
     public function definition(): array
     {
+        $medicineList = file('medicine_names.txt', FILE_IGNORE_NEW_LINES);
+        $medicineName = $medicineList[array_rand($medicineList)];
+        $medicineNameParts = explode(':', $medicineName);
+        $name = trim($medicineNameParts[0]);
+        $category = trim($medicineNameParts[1]);
+
         return [
-            'name' => fake()->word(),
-            'category' => fake()->randomElement(['Antibiotics', 'Painkillers', 'Antihistamines', 'Vitamins', 'Supplements']),
+            'name' => $name,
+            'category' => $category,
             'description' => fake()->sentence(),
             'price' => fake()->randomFloat(2, 1, 100),
             'quantity' => fake()->numberBetween(1, 100),
