@@ -246,7 +246,7 @@ class StatisticsController extends Controller
         return response()->json($data);
     }
 
-    public function PharmacistMedicinesStatistics(): JsonResponse
+    public function pharmacistMedicinesStatistics(): JsonResponse
     {
         $query = MedicineRequest::query();
 
@@ -278,6 +278,38 @@ class StatisticsController extends Controller
         return response()->json($data);
     }
 
+    public function nurseMonitoringSheetsStatistics(): JsonResponse
+    {
+        $query = MonitoringSheet::query();
+
+        if ($startDate = request('startDate')) {
+            $query->whereDate('created_at', '>=', $startDate);
+        }
+        if ($endDate = request('endDate')) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+
+        $of = request('of');
+        $type = request('type');
+
+        if ($of == "Filled"){
+            $dateColumn = 'filling_date';
+            $filledColumn = 'filled_by_id';
+
+            if ($type) {
+                $query = $this->filterByType($query, $dateColumn, $type);
+            }
+            $query = $query->select(DB::raw("DATE($dateColumn) as date"), $filledColumn, DB::raw("count(*) as count"))
+                ->where('filled_by_id', '=', auth()->user()->id)
+                ->groupBy('date', $filledColumn)
+                ->orderBy('date')
+                ->get();
+
+            $data = $this->getChartDataForOtherTypes($query, $dateColumn, 'name', 'Quantity', queryExist: true);
+
+        }
+        return response()->json($data);
+    }
     private function filterByType($query, $dateColumn, $type)
     {
         switch ($type) {

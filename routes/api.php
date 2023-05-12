@@ -172,7 +172,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/medicines', [\App\Http\Controllers\MedicineController::class, 'store']);
             Route::put('/medicines/{medicine}', [\App\Http\Controllers\MedicineController::class, 'update']);
             Route::delete('/medicines/{medicine}', [\App\Http\Controllers\MedicineController::class, 'delete']);
-            Route::get('/medicines/statistics', [\App\Http\Controllers\StatisticsController::class, 'PharmacistMedicinesStatistics']);
+            Route::get('/medicines/statistics', [\App\Http\Controllers\StatisticsController::class, 'pharmacistMedicinesStatistics']);
 
             Route::get('/medicine-requests', [MedicineRequestController::class, 'pharmacy_index']);
             Route::get('/medicine-requests/query', [MedicineRequestController::class, 'medicineRequestsQuery']);
@@ -185,7 +185,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/monitoring-sheets/my-latest-filled', [\App\Http\Controllers\StatisticsController::class, 'nurseFilledMonitoringSheets']);
         Route::get('/monitoring-sheets/total-filled', [\App\Http\Controllers\StatisticsController::class, 'nurseTotalFilledMonitoringSheets']);
         Route::get('/monitoring-sheets/today-available', [\App\Http\Controllers\StatisticsController::class, 'nurseMonitoringSheetsAvailableToFill']);
-
+        Route::get('/monitoring-sheets/statistics', [\App\Http\Controllers\StatisticsController::class, 'nurseMonitoringSheetsStatistics']);
     });
 
 
