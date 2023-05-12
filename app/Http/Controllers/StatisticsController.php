@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MonitoringSheet;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -12,6 +11,9 @@ use Carbon\Carbon;
 
 use App\Models\Patient;
 use App\Models\MedicalRecord;
+use App\Models\MonitoringSheet;
+use App\Models\Medicine;
+use App\Models\MedicineRequest;
 
 class StatisticsController extends Controller
 {
@@ -229,13 +231,14 @@ class StatisticsController extends Controller
 
             $data = $this->getChartDataForDateType($query, $leavingDateColumn, 'Outpatient');
         } else if ($of == 'Diagnosis') {
+            $dateColumn = 'patient_entry_date';
             $diagnosisColumn = 'state_upon_enter';
 
             if ($type) {
                 $query = $this->filterByType($query, 'patient_entry_date', $type);
             }
 
-            $data = $this->getChartDataForOtherTypes($query, $diagnosisColumn, 'Diagnosis');
+            $data = $this->getChartDataForOtherTypes($query, $dateColumn, $diagnosisColumn, 'Diagnosis');
         } else {
             return response()->json(['message' => 'Invalid request'], Response::HTTP_BAD_REQUEST);
         }
@@ -243,6 +246,37 @@ class StatisticsController extends Controller
         return response()->json($data);
     }
 
+    public function PharmacistMedicinesStatistics(): JsonResponse
+    {
+        $query = MedicineRequest::query();
+
+        if ($startDate = request('startDate')) {
+            $query->whereDate('created_at', '>=', $startDate);
+        }
+        if ($endDate = request('endDate')) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+        $of = request('of');
+        $type = request('type');
+        $id = request('id');
+        if ($of == 'Quantity') {
+            $dateColumn = 'medicine_requests.created_at';
+            $quantityColumn = 'medicine_id';
+
+            if ($type) {
+                $query = $this->filterByType($query, $dateColumn, $type);
+            }
+            $query = $query->select(DB::raw("DATE($dateColumn) as date"), $quantityColumn, 'medicines.name', DB::raw("sum(medicine_requests.quantity) as count"))
+                ->join('medicines', 'medicine_requests.medicine_id', '=', 'medicines.id')
+                ->where('medicine_requests.status', '=', 'Approved')
+                ->where('medicines.id', '=', $id)
+                ->groupBy('date', $quantityColumn, 'medicines.name')
+                ->orderBy('date')
+                ->get();
+            $data = $this->getChartDataForOtherTypes($query, $dateColumn, 'name', 'Quantity', queryExist: true);
+        }
+        return response()->json($data);
+    }
 
     private function filterByType($query, $dateColumn, $type)
     {
@@ -274,13 +308,14 @@ class StatisticsController extends Controller
 
         return $query;
     }
-    private function getChartDataForOtherTypes($query, $diagnosisColumn, $label)
+    private function getChartDataForOtherTypes($query, $dateColumn, $diagnosisColumn, $label, $aggregate = 'count', $aggregateColumn = '*', $queryExist = false)
     {
-        $query = $query->select(DB::raw('DATE(patient_entry_date) as date'), $diagnosisColumn, DB::raw('COUNT(*) as count'))
-            ->groupBy('date', $diagnosisColumn)
-            ->orderBy('date')
-            ->get();
-
+        if (!$queryExist) {
+            $query = $query->select(DB::raw("DATE($dateColumn) as date"), $diagnosisColumn, DB::raw("$aggregate($aggregateColumn) as count"))
+                ->groupBy('date', $diagnosisColumn)
+                ->orderBy('date')
+                ->get();
+        }
         $totalCount = 0;
         $stateCounts = [];
         $dates = [];
