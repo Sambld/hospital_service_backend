@@ -25,7 +25,8 @@ class AiController extends Controller
         # monitoring_sheets(id, record_id, filled_by_id, filling_date, urine, blood_pressure, weight, temperature, progress_report, created_at, updated_at)
         # medicines(id, name, category, description, price, quantity, is_pharmaceutical, manufacturer, supplier, expiration_date, created_at, updated_at)
         # treatments(id, monitoring_sheet_id, medicine_id, name, dose, type, created_at, updated_at)
-        # medicine_requests(id, user_id, record_id, medicine_id, quantity, status, review, created_at, updated_at)  // status: Pending, Approved, Rejected
+        # prescriptions(id, medical_record_id, user_id, created_at, updated_at)
+        # medicine_requests(id, user_id, prescription_id, medicine_id, quantity, status, review, created_at, updated_at)  // status: ( Pending, Approved, Rejected )
         # mandatory_declaration(id, diagnosis, detail, medical_record_id, created_at, updated_at)
         #
         ### A query to get  ";

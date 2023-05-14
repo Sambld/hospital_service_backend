@@ -25,11 +25,18 @@ class StatisticsController extends Controller
         // return only the latest 10 filled monitoring sheets in the last 24 hours.
         $monitoringSheets = $doctor->medicalRecords
             ->flatMap(function ($record) {
-                return $record->monitoringSheets;
+                return $record->monitoringSheets
+                    ->load(['medicalRecord' => function($query){
+                        $query->select('id','patient_id');
+                    }])
+
+
+                    ;
             })
             ->whereNotNull('filled_by_id')
             //            ->where('updated_at', '>', now()->subDay())
             ->sortByDesc('updated_at')
+
             ->take(10)
             ->toArray();
 

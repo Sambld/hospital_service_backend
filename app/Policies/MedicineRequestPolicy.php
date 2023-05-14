@@ -8,6 +8,7 @@ use App\Models\Observation;
 use App\Models\Patient;
 use App\Models\Prescription;
 use App\Models\User;
+use Faker\Provider\Medical;
 use Illuminate\Auth\Access\Response;
 
 class MedicineRequestPolicy
@@ -52,9 +53,9 @@ class MedicineRequestPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, MedicineRequest $medicineRequest): bool
+    public function delete(User $user, MedicineRequest $medicineRequest , MedicalRecord $medicalRecord): bool
     {
-        return $user->isPharm() || $medicineRequest->user_id == $user->id;
+        return $user->isPharm() || $medicalRecord->user_id == $user->id;
     }
 
     /**

@@ -33,7 +33,10 @@ class PrescriptionController extends Controller
     {
         $this->authorize('belongings', [Prescription::class, $prescription, $patient, $medicalRecord]);
 //        $this->authorize('view', [Prescription::class, $medicalRecord]);
-        return response()->json($prescription->load('medicineRequests.medicine'));
+        return response()->json($prescription->load(['medicineRequests' => function ($query) {
+            $query->orderByRaw("FIELD(status , 'Pending' , 'Approved' , 'Rejected')");
+
+        } , 'medicineRequests.medicine']));
 
     }
 
