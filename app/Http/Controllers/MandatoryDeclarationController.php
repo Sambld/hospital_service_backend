@@ -17,6 +17,9 @@ class MandatoryDeclarationController extends Controller
 
         $mandatoryDeclaration = $medicalRecord->mandatoryDeclaration;
 
+        if (!$mandatoryDeclaration) {
+            return response()->json(['message' => 'No mandatory declaration found for this medical record.'], 404);
+        }
         $data = $this->add_abilities($mandatoryDeclaration, $patient, $medicalRecord);
 
         return response()->json(['data' => $data]);
