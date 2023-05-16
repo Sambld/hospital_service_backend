@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patient;
+use App\Models\MedicalRecord;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
+
 
 class PatientController extends Controller
 {
@@ -113,7 +116,10 @@ class PatientController extends Controller
 
     public function delete(Patient $patient): JsonResponse
     {
-
+        $isThereAnyMedicalRecord = MedicalRecord::where('patient_id', $patient->id)->first();
+        if ($isThereAnyMedicalRecord) {
+            return response()->json(['message' => 'Patient has medical records.'], 409);
+        }
 
         $patient->delete();
         return response()->json(['message' => 'Patient deleted successfully.']);
