@@ -13,32 +13,32 @@ class PatientController extends Controller
     //
     public function patient(Patient $patient): JsonResponse
     {
-            if (\request()->has('withMedicalRecords')){
-                return response()->json(['data' => ['patient' => $patient->load('medicalRecords.assignedDoctor')]]);
+        if (\request()->has('withMedicalRecords')) {
+            return response()->json(['data' => ['patient' => $patient->load('medicalRecords.assignedDoctor')]]);
 
-            }
-            return response()->json(['data' => ['patient' => $patient]]);
+        }
+        return response()->json(['data' => ['patient' => $patient]]);
 
 
     }
 
     public function index(): JsonResponse
     {
-        if(request()->has('count')){
+        if (request()->has('count')) {
             return response()->json(['count' => Patient::count()]);
         }
 
-        if (\request()->has('onlyMyPatientsCount')){
+        if (\request()->has('onlyMyPatientsCount')) {
             return response()->json(['count' => Auth::user()->medicalRecords()->count()]);
         }
         $inHospitalOnly = request()->has('inHospitalOnly');
 
-        if(request()->has('q')){
+        if (request()->has('q')) {
             $patients = $this->search(request()->q, $inHospitalOnly);
-            if ($patients->isEmpty()){
-                return response()->json([ 'message' => 'not found!' ],404);
+            if ($patients->isEmpty()) {
+                return response()->json(['message' => 'not found!'], 404);
             } else {
-                return response()->json([ 'count' => $patients->count(), 'data' => $patients->toQuery()->orderByDesc('created_at')->paginate() ]);
+                return response()->json(['count' => $patients->count(), 'data' => $patients->toQuery()->orderByDesc('created_at')->paginate()]);
             }
         }
 
@@ -71,6 +71,16 @@ class PatientController extends Controller
             'emergency_contact_name' => 'nullable|string|max:255',
             'emergency_contact_number' => 'nullable|string|max:255',
         ]);
+        // make all data lowercase
+        for ($i = 0; $i < count($data); $i++) {
+            $data[array_keys($data)[$i]] = strtolower($data[array_keys($data)[$i]]);
+        }
+        $patient = Patient::where('first_name', $data['first_name'])->where('last_name', $data['last_name'])
+            ->where('birth_date', $data['birth_date'])
+            ->first();
+        if ($patient) {
+            return response()->json(['message' => 'Patient already exists.'], 409);
+        }
 
 
         $patient = Patient::create($data);

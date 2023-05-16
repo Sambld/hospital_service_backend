@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static find($id)
  * @method static paginate()
  * @method static withCount(string $string)
+ * @method static where(string $string, mixed $first_name)
  */
 class Patient extends Model
 {
