@@ -26,18 +26,15 @@ class PrescriptionController extends Controller
         $prescriptions = $medicalRecord->prescriptions;
 
         return response()->json($prescriptions->load('medicineRequests.medicine'));
-
     }
 
     public function prescription(Patient $patient, MedicalRecord $medicalRecord, Prescription $prescription): JsonResponse
     {
         $this->authorize('belongings', [Prescription::class, $prescription, $patient, $medicalRecord]);
-//        $this->authorize('view', [Prescription::class, $medicalRecord]);
+        //        $this->authorize('view', [Prescription::class, $medicalRecord]);
         return response()->json($prescription->load(['medicineRequests' => function ($query) {
             $query->orderByRaw("FIELD(status , 'Pending' , 'Approved' , 'Rejected')");
-
-        } , 'medicineRequests.medicine']));
-
+        }, 'medicineRequests.medicine']));
     }
 
     public function store(Patient $patient, MedicalRecord $medicalRecord): JsonResponse
@@ -87,14 +84,15 @@ class PrescriptionController extends Controller
         $prescriptionDate = $prescription->created_at->format('M d, Y');
 
         // get the prescription QR code svg to base64 encode it
-        $prescriptionQRCode = base64_encode(QrCode::format('svg')->size(100)->generate(
-            json_encode([
-                'id' => $prescription->id,
-                'doctor' => $medicalRecord->assignedDoctor->first_name . ' ' . $medicalRecord->assignedDoctor->last_name,
-                'patient' => $patientName,
-                'date' => $prescriptionDate,
-            ])
-        )
+        $prescriptionQRCode = base64_encode(
+            QrCode::format('svg')->size(100)->generate(
+                json_encode([
+                    'id' => $prescription->id,
+                    'doctor' => $medicalRecord->assignedDoctor->first_name . ' ' . $medicalRecord->assignedDoctor->last_name,
+                    'patient' => $patientName,
+                    'date' => $prescriptionDate,
+                ])
+            )
         );
         // Pass the data to the blade template
         $data = [
@@ -133,47 +131,53 @@ class PrescriptionController extends Controller
     public function pharmacyIndex(Request $request)
     {
         $status = $request->get('status');
-        $medicalRecords = MedicalRecord::select('id', 'patient_id', 'user_id', 'condition_description');
-
-        if ($status == 'open') {
-            $medicalRecords->whereHas('prescriptions.medicineRequests', function ($query) {
-                $query->where('status', '=', 'Pending');
-            });
-        } elseif ($status == 'closed') {
-            $medicalRecords->whereDoesntHave('prescriptions.medicineRequests', function ($query) {
-                $query->where('status', '=', 'Pending');
-            })
-                ->whereHas('prescriptions.medicineRequests', function ($query) {
+        $medicalRecords = MedicalRecord::select('id', 'patient_id', 'user_id', 'condition_description')
+            ->whereHas('prescriptions.medicineRequests', function ($query) use ($status) {
+                if ($status === 'open') {
+                    $query->where('status', '=', 'Pending');
+                } elseif ($status === 'closed') {
                     $query->where('status', '!=', 'Pending');
-                });
+                }
+            })
+            ->with([
+                'prescriptions' => function ($query) use ($status) {
+                    $query->orderByDesc('updated_at')
+                        ->whereHas('medicineRequests', function ($query) use ($status) {
+                            if ($status === 'open') {
+                                $query->where('status', '=', 'Pending');
+                            } elseif ($status === 'closed') {
+                                $query->where('status', '!=', 'Pending');
+                            }
+                        })
+                        ->with([
+                            'medicineRequests' => function ($query) use ($status) {
+                                $query->orderByRaw("FIELD(status, 'Pending', 'Approved', 'Rejected')")
+                                    ->select('id', 'quantity', 'status', 'review', 'prescription_id', 'medicine_id')
+                                    ->with([
+                                        'medicine' => function ($query) {
+                                            $query->select('id', 'name', 'quantity');
+                                        }
+                                    ]);
+                            }
+                        ]);
+                },
+                'patient' => function ($query) {
+                    $query->select('id', 'first_name', 'last_name');
+                },
+                'assignedDoctor' => function ($query) {
+                    $query->select('id', 'first_name', 'last_name');
+                }
+            ])
+            ->get();
+
+        if (\request()->query('count')) {
+            $prescriptionCount = $medicalRecords->flatMap(function ($medicalRecord) {
+                return $medicalRecord->prescriptions;
+            })->count();
+
+            return response()->json(['count' => $prescriptionCount]);
         }
-
-        $medicalRecords->with([
-            'prescriptions' => function ($query) {
-                $query->orderByDesc('updated_at')
-                    ->with([
-                        'medicineRequests' => function ($query) {
-                            $query->orderByRaw("FIELD(status , 'Pending' , 'Approved' , 'Rejected')")
-                                ->select('id', 'quantity', 'status', 'review', 'prescription_id', 'medicine_id')
-                                ->with([
-                                    'medicine' => function ($query) {
-                                        $query->select('id', 'name', 'quantity');
-                                    }
-                                ]);
-                        }
-                    ]);
-            },
-            'patient' => function ($query) {
-                $query->select('id', 'first_name', 'last_name');
-            },
-            'assignedDoctor' => function ($query) {
-                $query->select('id', 'first_name', 'last_name');
-            }
-        ]);
-
-        $medicalRecords = $medicalRecords->get();
 
         return response()->json(CollectionHelper::paginate($medicalRecords, 20));
     }
-
 }

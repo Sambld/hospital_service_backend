@@ -23,46 +23,6 @@ class MedicineRequestController extends Controller
         return response()->json(['data' => $request]);
     }
 
-    public function pharmacy_index()
-    {
-        $status = request()->query('status');
-
-        $records = MedicalRecord::with(['prescriptions.medicineRequests' => function ($query) {
-            $query->orderBy('created_at', 'desc');
-        }])->get();
-
-        $medicineRequestsPerRecord = $records->map(function ($record) use ($status) {
-            $prescriptions = $record->prescriptions;
-            $unrespondedRequests = $prescriptions->flatMap(function ($prescription) {
-                return $prescription->medicineRequests->where('status', 'Pending');
-            });
-            $all_requests_responded_to = $unrespondedRequests->isEmpty();
-
-            if (($status == 'Approved' && !$all_requests_responded_to) || ($status == 'Rejected' && $all_requests_responded_to) || !$status) {
-                $prescriptions = $prescriptions->map(function ($prescription) {
-                    $medicineRequests = $prescription->medicineRequests->sortByDesc('created_at');
-                    return [
-                        'prescription_id' => $prescription->id,
-                        'doctor' => $prescription->medicalRecord->assignedDoctor->fullname(),
-                        'patient' => $prescription->medicalRecord->patient->fullname(),
-                        'patient_id' => $prescription->medicalRecord->patient->id,
-                        'medicine_requests' => $medicineRequests->load('medicine'),
-                    ];
-                });
-
-                return $prescriptions;
-            }
-        })->filter()->flatten(1)->values();
-
-        if (\request()->query('count')) {
-            return response()->json(['count' => $medicineRequestsPerRecord->count()]);
-        }
-
-        $medicineRequestsPerRecord = CollectionHelper::paginate($medicineRequestsPerRecord, 15);
-
-        return response()->json($medicineRequestsPerRecord);
-    }
-
     public function medicineRequestsQuery()
     {
         $query = MedicineRequest::query();

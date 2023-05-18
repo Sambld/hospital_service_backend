@@ -174,7 +174,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/medicines/{medicine}', [\App\Http\Controllers\MedicineController::class, 'delete']);
             Route::get('/medicines/statistics', [\App\Http\Controllers\StatisticsController::class, 'pharmacistMedicinesStatistics']);
 
-            Route::get('/medicine-requests', [MedicineRequestController::class, 'pharmacy_index']);
             Route::get('/medicine-requests/query', [MedicineRequestController::class, 'medicineRequestsQuery']);
 
             Route::get('/prescriptions', [PrescriptionController::class, 'pharmacyIndex']);
