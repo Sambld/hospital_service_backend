@@ -57,14 +57,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/patients' , [PatientController::class,'store']);
         Route::put('/patients/{patient}' , [PatientController::class,'update']);
         Route::delete('/patients/{patient}' , [PatientController::class,'delete']);
-        Route::get('/patients/statistics' , [StatisticsController::class,'doctorPatientsStatistics']);
 
 
         // medical record management
         Route::post('/patients/{patient}/medical-records', [MedicalRecordController::class, 'store']);
         Route::put('/patients/{patient}/medical-records/{medical_record}', [MedicalRecordController::class, 'update']);
         Route::delete('/patients/{patient}/medical-records/{medical_record}', [MedicalRecordController::class, 'delete']);
-        Route::get('/medical-records/statistics', [StatisticsController::class, 'doctorMedicalRecordsStatistics']);
 
         // monitoring sheet management
         Route::post('/patients/{patient}/medical-records/{medical_record}/monitoring-sheets', [MonitoringSheetController::class, 'store']);
@@ -116,6 +114,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // monitoring sheet view and edit
         Route::put('/patients/{patient}/medical-records/{medical_record}/monitoring-sheets/{monitoring_sheet}', [MonitoringSheetController::class, 'update']);
+
+        // statistics
+        Route::get('/patients/statistics' , [StatisticsController::class,'doctorPatientsStatistics']);
+        Route::get('/medical-records/statistics', [StatisticsController::class, 'doctorMedicalRecordsStatistics']);
 
 
 
