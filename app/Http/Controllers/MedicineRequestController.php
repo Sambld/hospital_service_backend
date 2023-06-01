@@ -27,8 +27,8 @@ class MedicineRequestController extends Controller
     {
         $query = MedicineRequest::query();
 
-        
-        
+
+
         if (\request()->has('doctorId')) {
             $query->whereHas('medicalRecord', function ($q) {
                 $q->where('user_id', \request()->get('doctorId'));
@@ -54,14 +54,15 @@ class MedicineRequestController extends Controller
             $query->whereDate('created_at', '<=', \request()->get('endDate'));
         }
 
-        
-        
 
-        
+
+
+
 
         $query->with(['medicine']);
         if (\request()->has('count')) {
             $medicineRequests = $query->selectRaw('medicine_id, sum(quantity) as quantity')
+                ->where('status', 'Approved')
                 ->groupBy('medicine_id')
                 ->get();
 

@@ -28,6 +28,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('/predict' , function (Request $request){
+//    error_log($request);
+    error_log($request->get('file'));
+    return response()->json(['message' => 'success']);
+});
 
 Route::post('/user', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
