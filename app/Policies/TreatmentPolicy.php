@@ -40,7 +40,7 @@ class TreatmentPolicy
     {
 //        error_log('observation create');
 //        dd($patient, $medicalRecord,$monitoringSheet);
-        return $medicalRecord->patient_id == $patient->id && $monitoringSheet->record_id == $medicalRecord->id && $user->id == $medicalRecord->user_id;
+        return $medicalRecord->patient_id == $patient->id && $monitoringSheet->record_id == $medicalRecord->id && $user->id == $monitoringSheet->user_id;
 
 
     }

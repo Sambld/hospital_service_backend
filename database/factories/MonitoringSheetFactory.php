@@ -29,7 +29,7 @@ class MonitoringSheetFactory extends Factory
                 'record_id' => $record->id,
                 'user_id' => $doctor->id,
                 'filled_by_id' => $staff->id,
-                'filling_date' => fake()->dateTimeBetween('-7 days')->format('Y-m-d'),
+                'filling_date' => fake()->dateTimeBetween('-7 days')->format('Y-m-d H:m'),
                 'urine' => fake()->numberBetween(100, 1000),
                 'blood_pressure' => fake()->numberBetween(80, 200). '/' . fake()->numberBetween(50, 150),
                 'weight' => fake()->numberBetween(40, 200),

@@ -21,20 +21,32 @@ class StatisticsController extends Controller
     public function doctorMonitoringSheetsLatestUpdates()
     {
         $doctor = Auth::user();
-        $doctor->load('medicalRecords.monitoringSheets.filledBy');
+//        $doctor->load('medicalRecords.monitoringSheets.filledBy');
+        $doctor->load('monitoringSheets.filledBy');
         // return only the latest 10 filled monitoring sheets in the last 24 hours.
-        $monitoringSheets = $doctor->medicalRecords
-            ->flatMap(function ($record) {
-                return $record->monitoringSheets
-                    ->load(['medicalRecord' => function ($query) {
-                        $query->select('id', 'patient_id');
-                    }]);
-            })
+//        $monitoringSheets = $doctor->medicalRecords
+//            ->flatMap(function ($record) {
+//                return $record->monitoringSheets
+//                    ->load(['medicalRecord' => function($query){
+//                        $query->with(['patient' => function($query){
+//                            $query->select('id','first_name','last_name' );
+//                        }])->select('id','patient_id','bed_number');
+//                    }])
+//
+//
+//                    ;
+//            })
+
+            $monitoringSheets = $doctor->monitoringSheets->load(['medicalRecord' => function($query){
+                $query->with(['patient' => function($query){
+                    $query->select('id','first_name','last_name' );
+                }])->select('id','patient_id','bed_number');
+            }])
             ->whereNotNull('filled_by_id')
             //            ->where('updated_at', '>', now()->subDay())
-            ->sortByDesc('updated_at')
+            ->sortByDesc('filling_date')
 
-            ->take(10)
+            ->take(20)
             ->toArray();
 
         // add patient name to each monitoring sheet
@@ -99,13 +111,15 @@ class StatisticsController extends Controller
     public function doctorPatientsStatistics(): JsonResponse
     {
         $query = Patient::query();
-        $selectedDate = Carbon::now();
 
-        if (\request()->has('selectedDate')) {
-            $selectedDate = Carbon::parse(\request()->selectedDate);
+        if (\request()->has('startDate')) {
+            $query->whereDate('created_at', '>=', \request()->get('startDate'));
+        }
+        if (\request()->has('endDate')) {
+            $query->whereDate('created_at', '<=', \request()->get('endDate'));
         }
         if (\request()->has('type')) {
-            $query = $this->filterByType($query, 'created_at', \request()->get('type'), $selectedDate);
+            $query = $this->filterByType($query, 'created_at', \request()->get('type'));
         }
 
         if (\request()->has('of')) {
@@ -206,21 +220,21 @@ class StatisticsController extends Controller
     {
         $query = MedicalRecord::query();
 
-        $selectedDate = Carbon::now();
-
-        if (\request()->has('selectedDate')) {
-            $selectedDate = Carbon::parse(\request()->selectedDate);
+        if ($startDate = request('startDate')) {
+            $query->whereDate('created_at', '>=', $startDate);
         }
-        // return response()->json($selectedDate->subDays(6)->format('Y-m-d'));
+        if ($endDate = request('endDate')) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+
         $of = request('of');
         $type = request('type');
-        
 
         if ($of == 'Inpatient') {
             $entryDateColumn = 'patient_entry_date';
 
             if ($type) {
-                $query = $this->filterByType($query, $entryDateColumn, $type, $selectedDate);
+                $query = $this->filterByType($query, $entryDateColumn, $type);
             }
 
             $data = $this->getChartDataForDateType($query, $entryDateColumn, 'Inpatient');
@@ -228,7 +242,7 @@ class StatisticsController extends Controller
             $leavingDateColumn = 'patient_leaving_date';
 
             if ($type) {
-                $query = $this->filterByType($query, $leavingDateColumn, $type, $selectedDate);
+                $query = $this->filterByType($query, $leavingDateColumn, $type);
             }
 
             $data = $this->getChartDataForDateType($query, $leavingDateColumn, 'Outpatient');
@@ -236,11 +250,9 @@ class StatisticsController extends Controller
             $dateColumn = 'patient_entry_date';
             $diagnosisColumn = 'state_upon_enter';
 
-            // return response()->json($this->filterByType($query, $dateColumn, $type, $selectedDate));
             if ($type) {
-                $query = $this->filterByType($query, $dateColumn, $type, $selectedDate);
+                $query = $this->filterByType($query, 'patient_entry_date', $type);
             }
-            
 
             $data = $this->getChartDataForOtherTypes($query, $dateColumn, $diagnosisColumn, 'Diagnosis');
         } else {
@@ -253,12 +265,13 @@ class StatisticsController extends Controller
     public function pharmacistMedicinesStatistics(): JsonResponse
     {
         $query = MedicineRequest::query();
-        $selectedDate = Carbon::now();
 
-        if (\request()->has('selectedDate')) {
-            $selectedDate = Carbon::parse(\request()->selectedDate);
+        if ($startDate = request('startDate')) {
+            $query->whereDate('created_at', '>=', $startDate);
         }
-
+        if ($endDate = request('endDate')) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
         $of = request('of');
         $type = request('type');
         $id = request('id');
@@ -267,7 +280,7 @@ class StatisticsController extends Controller
             $quantityColumn = 'medicine_id';
 
             if ($type) {
-                $query = $this->filterByType($query, $dateColumn, $type, $selectedDate);
+                $query = $this->filterByType($query, $dateColumn, $type);
             }
             $query = $query->select(DB::raw("DATE($dateColumn) as date"), $quantityColumn, 'medicines.name', DB::raw("sum(medicine_requests.quantity) as count"))
                 ->join('medicines', 'medicine_requests.medicine_id', '=', 'medicines.id')
@@ -284,21 +297,23 @@ class StatisticsController extends Controller
     public function nurseMonitoringSheetsStatistics(): JsonResponse
     {
         $query = MonitoringSheet::query();
-        $selectedDate = Carbon::now()->toDateString();
 
-        if (\request()->has('selectedDate')) {
-            $selectedDate = Carbon::parse(\request()->selectedDate)->toDateString();
+        if ($startDate = request('startDate')) {
+            $query->whereDate('created_at', '>=', $startDate);
+        }
+        if ($endDate = request('endDate')) {
+            $query->whereDate('created_at', '<=', $endDate);
         }
 
         $of = request('of');
         $type = request('type');
 
-        if ($of == "Filled") {
+        if ($of == "Filled"){
             $dateColumn = 'filling_date';
             $filledColumn = 'filled_by_id';
 
             if ($type) {
-                $query = $this->filterByType($query, $dateColumn, $type, $selectedDate);
+                $query = $this->filterByType($query, $dateColumn, $type);
             }
             $query = $query->select(DB::raw("DATE($dateColumn) as date"), $filledColumn, DB::raw("count(*) as count"))
                 ->where('filled_by_id', '=', auth()->user()->id)
@@ -307,32 +322,30 @@ class StatisticsController extends Controller
                 ->get();
 
             $data = $this->getChartDataForOtherTypes($query, $dateColumn, 'name', 'Quantity', queryExist: true);
+
         }
         return response()->json($data);
     }
-    private function filterByType($query, $dateColumn, $type, $selectedDate)
+    private function filterByType($query, $dateColumn, $type)
     {
         switch ($type) {
             case 'day':
-                $query->whereDate($dateColumn, '=', $selectedDate->format('Y-m-d'));
+                $query->whereDate($dateColumn, '=', now()->format('Y-m-d'));
                 break;
             case 'week':
                 $query->whereBetween($dateColumn, [
-                    $selectedDate->subDays(6)->format('Y-m-d'),
-                    $selectedDate->addDays(7)->format('Y-m-d')
+                    now()->subWeek()->startOfWeek()->format('Y-m-d'),
+                    now()->addDay()->format('Y-m-d')
                 ]);
                 break;
             case 'month':
                 $query->whereBetween($dateColumn, [
-                    $selectedDate->subDays(30)->format('Y-m-d'),
-                    $selectedDate->addDays(31)->format('Y-m-d')
+                    now()->subDays(30)->format('Y-m-d'),
+                    now()->addDay()->format('Y-m-d')
                 ]);
                 break;
             case 'year':
-                $query->whereBetween($dateColumn, [
-                    $selectedDate->subDays(365)->format('Y-m-d'),
-                    $selectedDate->addDays(366)->format('Y-m-d')
-                ]);
+                $query->whereYear($dateColumn, '=', now()->year);
                 break;
             case 'all':
                 // no filtering required

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('filled_by_id')->nullable();
             $table->foreign('record_id')->references('id')->on('medical_records')->cascadeOnDelete();
             $table->foreign('filled_by_id')->references('id')->on('users')->cascadeOnDelete();
-            $table->date('filling_date');
+            $table->dateTime('filling_date');
             $table->integer('urine')->nullable();
             $table->string('blood_pressure')->nullable();
             $table->double('weight')->nullable();
