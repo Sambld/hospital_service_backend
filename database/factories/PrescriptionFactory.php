@@ -21,7 +21,6 @@ class PrescriptionFactory extends Factory
         $doctor = User::where('role' , 'doctor')->inRandomOrder()->first();
         return [
             'medical_record_id' => $medicalRecord->id,
-            'name' => $this->faker->word,
             'user_id' => $doctor->id,
         ];
     }

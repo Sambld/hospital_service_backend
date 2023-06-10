@@ -40,24 +40,21 @@ class PrescriptionController extends Controller
     public function store(Patient $patient, MedicalRecord $medicalRecord): JsonResponse
     {
         $this->authorize('create', [Prescription::class, $patient, $medicalRecord]);
-        $data = request()->validate([
-            'name' => 'required|string',
-        ]);
-        $data['user_id'] = auth()->user()->id;
-        $prescription = $medicalRecord->prescriptions()->create($data);
+
+        $prescription = $medicalRecord->prescriptions()->create(['user_id' => auth()->id()]);
         return response()->json(['message' => 'Prescription created successfully', 'data' => $prescription]);
     }
 
 
-    public function update(Patient $patient, MedicalRecord $medicalRecord, Prescription $prescription): JsonResponse
-    {
-        $this->authorize('updateOrDelete', [Prescription::class, $prescription, $patient, $medicalRecord]);
-        $data = request()->validate([
-            'name' => 'required|string',
-        ]);
-        $prescription->update($data);
-        return response()->json(['message' => 'Prescription updated successfully']);
-    }
+//    public function update(Patient $patient, MedicalRecord $medicalRecord, Prescription $prescription): JsonResponse
+//    {
+//        $this->authorize('updateOrDelete', [Prescription::class, $prescription, $patient, $medicalRecord]);
+//        $data = request()->validate([
+//            'name' => 'required|string',
+//        ]);
+//        $prescription->update($data);
+//        return response()->json(['message' => 'Prescription updated successfully']);
+//    }
 
     public function delete(Patient $patient, MedicalRecord $medicalRecord, Prescription $prescription): JsonResponse
     {
@@ -160,7 +157,7 @@ class PrescriptionController extends Controller
                                             $query->select('id', 'name', 'quantity');
                                         }
                                     ]);
-                            }
+                            } , 'doctor'
                         ]);
                 },
                 'patient' => function ($query) {

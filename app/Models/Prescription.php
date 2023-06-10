@@ -11,7 +11,7 @@ class Prescription extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name' , 'medical_record_id' , 'user_id'];
+    protected $fillable = [ 'medical_record_id' , 'user_id'];
 
 
     public function medicalRecord() : BelongsTo

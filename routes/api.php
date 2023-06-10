@@ -96,7 +96,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // prescription management
         Route::post('/patients/{patient}/medical-records/{medical_record}/prescriptions', [PrescriptionController::class, 'store']);
-        Route::put('/patients/{patient}/medical-records/{medical_record}/prescriptions/{prescription}', [PrescriptionController::class, 'update']);
+//        Route::put('/patients/{patient}/medical-records/{medical_record}/prescriptions/{prescription}', [PrescriptionController::class, 'update']);
         Route::delete('/patients/{patient}/medical-records/{medical_record}/prescriptions/{prescription}', [PrescriptionController::class, 'delete']);
 
 

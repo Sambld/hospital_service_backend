@@ -70,6 +70,24 @@ class User extends Authenticatable
         return $this->first_name . ' ' . $this->last_name;
     }
 
+    public function prescriptions(): HasMany
+    {
+        return $this->hasMany(Prescription::class);
+    }
+
+    public function monitoringSheets(): HasMany
+    {
+        return $this->hasMany(MonitoringSheet::class);
+    }
+
+    public function ovservations(): HasMany
+    {
+        return $this->hasMany(Observation::class);
+    }
+
+
+
+
 
 
 }
