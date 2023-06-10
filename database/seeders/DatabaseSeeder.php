@@ -38,6 +38,15 @@ class DatabaseSeeder extends Seeder
         User::factory(5)->create(['role' => 'doctor']);
         $sam = new User(['first_name' => 'sam' , 'last_name' => 'samo' , 'username' => 'sam' , 'password' => bcrypt('samisamo') , 'role' => 'doctor']);
         $sam->save();
+        $nurse = new User(['first_name' => 'nurse' , 'last_name' => '1' , 'username' => 'nurse' , 'password' => bcrypt('pass') , 'role' => 'nurse']);
+        $nurse->save();
+        $admin = new User(['first_name' => 'admin' , 'last_name' => '1' , 'username' => 'admin' , 'password' => bcrypt('pass') , 'role' => 'administrator']);
+        $admin->save();
+        $doctor = new User(['first_name' => 'doctor' , 'last_name' => '1' , 'username' => 'doctor' , 'password' => bcrypt('pass') , 'role' => 'doctor']);
+        $doctor->save();
+        $pharmasict = new User(['first_name' => 'pharmacist' , 'last_name' => '1' , 'username' => 'pharmacist' , 'password' => bcrypt('pass') , 'role' => 'pharmacist']);
+        $pharmasict->save();
+
         Medicine::factory(100)->create();
         MedicalRecord::factory(200)->has(MandatoryDeclaration::factory())->create();
         MonitoringSheet::factory(500)->has(Treatment::factory()->count(5))->create();
