@@ -33,7 +33,7 @@ class MonitoringSheetController extends Controller
         $this->authorize('belongings', [$monitoringSheet, $patient, $medicalRecord,]);
         $monitoringSheet = $this->add_abilities($monitoringSheet, $patient, $medicalRecord);
 
-        return response()->json(['data' => $monitoringSheet->load(['filledBy','treatments'])]);
+        return response()->json(['data' => $monitoringSheet->load(['filledBy','treatments','doctor'])]);
     }
 
 
@@ -45,7 +45,7 @@ class MonitoringSheetController extends Controller
         $response = $sheets->map(function ($sheet) use ($patient, $medicalRecord) {
             return $this->add_abilities($sheet, $patient, $medicalRecord);
         });
-        return response()->json(['data' => $response->load(['filledBy','treatments'])]);
+        return response()->json(['data' => $response->load(['filledBy','treatments' , 'doctor'])]);
     }
 
     /**
@@ -57,7 +57,7 @@ class MonitoringSheetController extends Controller
 //        $this->authorize('create', [MonitoringSheet::class, $patient, $medicalRecord]);
 
         $this->authorize('create' , [MonitoringSheet::class,$patient, $medicalRecord]);
-        $validatedData = \request()->validate([
+        $data = \request()->validate([
             'filling_date' => 'required|date',
             'urine' => 'nullable|integer',
             'blood_pressure' => 'nullable|string',
@@ -67,10 +67,12 @@ class MonitoringSheetController extends Controller
             'filled_by_id' => 'nullable|exists:users,id',
         ]);
 
-        $validatedData['record_id'] = $medicalRecord->id;
+        $data['record_id'] = $medicalRecord->id;
+        $data['user_id'] = Auth::user()->id;
 
 
-        $sheet = $medicalRecord->monitoringSheets()->create($validatedData);
+
+        $sheet = $medicalRecord->monitoringSheets()->create($data);
         return response()->json(['message' => 'Monitoring sheet created successfully.', 'data' => $sheet]);
 
 

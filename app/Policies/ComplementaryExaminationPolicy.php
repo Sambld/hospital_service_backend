@@ -36,8 +36,8 @@ class ComplementaryExaminationPolicy
      */
     public function create(User $user , Patient $patient , MedicalRecord $medicalRecord): bool
     {
-        return $medicalRecord->patient_id == $patient->id;
-
+//        return $medicalRecord->patient_id == $patient->id;
+          return $user->isDoctor();
 
     }
 
@@ -46,7 +46,7 @@ class ComplementaryExaminationPolicy
      */
     public function updateOrDelete(User $user, ComplementaryExamination $complementaryExamination, Patient $patient , MedicalRecord $medicalRecord): bool
     {
-       return $complementaryExamination->medical_record_id == $medicalRecord->id && $medicalRecord->patient_id == $patient->id && $user->isDoctor() && $user->id == $medicalRecord->user_id;
+       return $complementaryExamination->medical_record_id == $medicalRecord->id && $medicalRecord->patient_id == $patient->id && $user->isDoctor() && $user->id == $complementaryExamination->user_id;
     }
 
     /**

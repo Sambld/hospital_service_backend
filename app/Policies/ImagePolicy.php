@@ -38,7 +38,7 @@ class ImagePolicy
     public function create(User $user , Patient $patient , MedicalRecord $medicalRecord , Observation $observation): bool
     {
 //        dd($user,$patient, $medicalRecord, $observation);
-        return $medicalRecord->user_id == $user->id && $observation->medical_record_id == $medicalRecord->id && $medicalRecord->patient_id == $patient->id;
+        return $observation->user_id == $user->id && $observation->medical_record_id == $medicalRecord->id && $medicalRecord->patient_id == $patient->id;
     }
 
     /**
@@ -54,7 +54,7 @@ class ImagePolicy
      */
     public function delete(User $user, Image $image , MedicalRecord $medicalRecord , Observation $observation): bool
     {
-        return $image->observation_id == $observation->id && $observation->medical_record_id == $medicalRecord->id && $medicalRecord->user_id == $user->id ;
+        return $image->observation_id == $observation->id && $observation->medical_record_id == $medicalRecord->id && $observation->user_id == $user->id ;
     }
 
     /**

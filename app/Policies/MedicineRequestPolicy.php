@@ -18,7 +18,7 @@ class MedicineRequestPolicy
      */
     public function viewAny(User $user,Patient $patient, MedicalRecord $medicalRecord , Prescription $prescription): bool
     {
-       return  $patient->id == $medicalRecord->patient_id && $prescription->medical_record_id == $medicalRecord->id  && ( $medicalRecord->user_id == $user->id || $user->isPharm());
+       return  $patient->id == $medicalRecord->patient_id && $prescription->medical_record_id == $medicalRecord->id  && ( $user->isDoctor() || $user->isPharm());
     }
 
     public function belongings(User $user , MedicineRequest $medicineRequest , Patient $patient , MedicalRecord $medicalRecord , Prescription $prescription): bool
@@ -31,7 +31,7 @@ class MedicineRequestPolicy
      */
     public function view(User $user, MedicineRequest $medicineRequest ,  MedicalRecord $medicalRecord): bool
     {
-        return $medicalRecord->user_id == $user->id || $user->isPharm() ;
+        return $user->isDoctor() || $user->isPharm() ;
     }
 
     /**
@@ -39,23 +39,23 @@ class MedicineRequestPolicy
      */
     public function create(User $user , Patient $patient, MedicalRecord $medicalRecord , Prescription $prescription): bool
     {
-        return  $patient->id == $medicalRecord->patient_id && $user->id == $medicalRecord->user_id && $prescription->medical_record_id == $medicalRecord->id ;
+        return  $patient->id == $medicalRecord->patient_id && $user->id == $prescription->user_id && $prescription->medical_record_id == $medicalRecord->id ;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user , MedicalRecord $medicalRecord ): bool
+    public function update(User $user , MedicalRecord $medicalRecord , Prescription $prescription ): bool
     {
-        return $user->isPharm() || $medicalRecord->user_id == $user->id;
+        return $user->isPharm() || $prescription->user_id == $user->id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, MedicineRequest $medicineRequest , MedicalRecord $medicalRecord): bool
+    public function delete(User $user, MedicineRequest $medicineRequest , MedicalRecord $medicalRecord, Prescription $prescription): bool
     {
-        return $user->isPharm() || $medicalRecord->user_id == $user->id;
+        return $user->isPharm() || $prescription->user_id == $user->id;
     }
 
     /**

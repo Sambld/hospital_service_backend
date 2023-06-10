@@ -27,12 +27,12 @@ class PrescriptionPolicy
 
     public function create(User $user , Patient $patient , MedicalRecord $medicalRecord): bool
     {
-        return $medicalRecord->patient_id == $patient->id && $user->id == $medicalRecord->user_id;
+        return $medicalRecord->patient_id == $patient->id && $user->isDoctor();
     }
 
     public function updateOrDelete(User $user, Prescription $prescription, Patient $patient , MedicalRecord $medicalRecord): bool
     {
-        return $prescription->medical_record_id == $medicalRecord->id && $medicalRecord->patient_id == $patient->id && $user->isDoctor() && $user->id == $medicalRecord->user_id;
+        return $prescription->medical_record_id == $medicalRecord->id && $medicalRecord->patient_id == $patient->id && $user->isDoctor() && $user->id == $prescription->user_id;
     }
 
 

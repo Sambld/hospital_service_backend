@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\MedicalRecord;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,9 +19,11 @@ class ObservationFactory extends Factory
     public function definition(): array
     {
         $record = MedicalRecord::inRandomOrder()->first();
+        $doctor = User::where('role' , 'doctor')->inRandomOrder()->first();
         return [
             'medical_record_id' => $record->id,
             'name' => $this->faker->sentence,
+            'user_id' => $doctor->id
         ];
     }
 }

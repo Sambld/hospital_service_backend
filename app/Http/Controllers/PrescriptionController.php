@@ -25,7 +25,7 @@ class PrescriptionController extends Controller
         $this->authorize('index', [Prescription::class, $patient, $medicalRecord]);
         $prescriptions = $medicalRecord->prescriptions;
 
-        return response()->json($prescriptions->load('medicineRequests.medicine'));
+        return response()->json($prescriptions->load(['medicineRequests.medicine', 'doctor'] ));
     }
 
     public function prescription(Patient $patient, MedicalRecord $medicalRecord, Prescription $prescription): JsonResponse
@@ -34,7 +34,7 @@ class PrescriptionController extends Controller
         //        $this->authorize('view', [Prescription::class, $medicalRecord]);
         return response()->json($prescription->load(['medicineRequests' => function ($query) {
             $query->orderByRaw("FIELD(status , 'Pending' , 'Approved' , 'Rejected')");
-        }, 'medicineRequests.medicine']));
+        }, 'medicineRequests.medicine' , 'doctor']));
     }
 
     public function store(Patient $patient, MedicalRecord $medicalRecord): JsonResponse
@@ -43,6 +43,7 @@ class PrescriptionController extends Controller
         $data = request()->validate([
             'name' => 'required|string',
         ]);
+        $data['user_id'] = auth()->user()->id;
         $prescription = $medicalRecord->prescriptions()->create($data);
         return response()->json(['message' => 'Prescription created successfully', 'data' => $prescription]);
     }
@@ -65,7 +66,7 @@ class PrescriptionController extends Controller
         return response()->json(['message' => 'Prescription deleted successfully']);
     }
 
-    public function prescriptionPDF(Patient $patient, MedicalRecord $medicalRecord, Prescription $prescription)
+    public function prescriptionPDF(Patient $patient, MedicalRecord $medicalRecord, Prescription $prescription) : Stream
     {
         // Load the prescription and its related medicine requests and medicines
         $prescription->load('medicineRequests.medicine');
@@ -83,12 +84,13 @@ class PrescriptionController extends Controller
 
         $prescriptionDate = $prescription->created_at->format('M d, Y');
 
+
         // get the prescription QR code svg to base64 encode it
         $prescriptionQRCode = base64_encode(
             QrCode::format('svg')->size(100)->generate(
                 json_encode([
                     'id' => $prescription->id,
-                    'doctor' => $medicalRecord->assignedDoctor->first_name . ' ' . $medicalRecord->assignedDoctor->last_name,
+                    'doctor' => $prescription->doctor->first_name . ' ' . $prescription->doctor->last_name,
                     'patient' => $patientName,
                     'date' => $prescriptionDate,
                 ])

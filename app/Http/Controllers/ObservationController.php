@@ -17,14 +17,14 @@ class ObservationController extends Controller
     {
         $this->authorize('belongings', [$observation, $patient, $medicalRecord,]);
         $data = $this->add_abilities($observation->load('images'), $patient, $medicalRecord);
-        return response()->json(['data' => $data]);
+        return response()->json(['data' => $data->load('doctor')]);
     }
 
     public function index(Patient $patient, MedicalRecord $medicalRecord)
     {
 //        dd($patient, $medicalRecord);
         $this->authorize('index', [Observation::class, $patient, $medicalRecord]);
-        $observations = $medicalRecord->observations->load('images');
+        $observations = $medicalRecord->observations->load(['images' , 'doctor']);
 //        dd($observations);
         $data = [];
         foreach ($observations as $observation) {
@@ -40,6 +40,7 @@ class ObservationController extends Controller
             'name' => 'required|string',
         ]);
 
+        $data['user_id'] = Auth::user()->id;
         $observation = $medicalRecord->observations()->create($data);
         $data = $this->add_abilities($observation, $patient, $medicalRecord);
         return response()->json(['data' => $data]);

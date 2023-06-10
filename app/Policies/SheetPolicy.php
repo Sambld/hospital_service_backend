@@ -31,9 +31,9 @@ class SheetPolicy
      */
     public function create(User $user, Patient $patient, MedicalRecord $medicalRecord): bool
     {
-        error_log('create');
+//        error_log('create');
 //        dd($patient,$medicalRecord);
-        return $patient->id == $medicalRecord->patient_id && $user->id == $medicalRecord->user_id;
+        return $patient->id == $medicalRecord->patient_id && $user->isDoctor();
     }
 
 
@@ -51,9 +51,9 @@ class SheetPolicy
     public function update(User $user, MonitoringSheet $monitoringSheet, Patient $patient, MedicalRecord $medicalRecord)
     {
         if ($monitoringSheet->isFilled()) {
-            return ($user->id == $medicalRecord->user_id || $user->id == $monitoringSheet->filled_by_id);
+            return ($user->id == $monitoringSheet->user_id || $user->id == $monitoringSheet->filled_by_id);
         } else {
-            if ($user->role == 'doctor') return $user->id == $medicalRecord->user_id;
+            if ($user->role == 'doctor') return $user->id == $monitoringSheet->user_id;
         }
         return true;
 
@@ -65,7 +65,7 @@ class SheetPolicy
      */
     public function delete(User $user, MonitoringSheet $monitoringSheet, MedicalRecord $medicalRecord): bool
     {
-        return $user->isDoctor() && $user->id == $medicalRecord->user_id && $monitoringSheet->record_id == $medicalRecord->id;
+        return $user->isDoctor() && $user->id == $monitoringSheet->user_id && $monitoringSheet->record_id == $medicalRecord->id;
     }
 
     /**

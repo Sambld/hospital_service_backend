@@ -46,7 +46,7 @@ class ObservationPolicy
     {
 //        error_log('observation create');
 //        dd($patient, $medicalRecord);
-        return $medicalRecord->patient_id == $patient->id && $user->id == $medicalRecord->user_id;
+        return $medicalRecord->patient_id == $patient->id && $user->isDoctor();
 //        return true;
 
     }
@@ -56,7 +56,7 @@ class ObservationPolicy
      */
     public function updateOrDelete(User $user, Observation $observation, Patient $patient , MedicalRecord $medicalRecord): bool
     {
-        return $observation->medical_record_id == $medicalRecord->id && $medicalRecord->patient_id == $patient->id && $user->isDoctor() && $user->id == $medicalRecord->user_id;
+        return $observation->medical_record_id == $medicalRecord->id && $medicalRecord->patient_id == $patient->id && $user->isDoctor() && $user->id == $observation->user_id;
     }
 
     /**

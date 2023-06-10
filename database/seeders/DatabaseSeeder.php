@@ -34,6 +34,8 @@ class DatabaseSeeder extends Seeder
 
         Patient::factory(50)->create();
         User::factory(10)->create();
+        // create 5 doctors
+        User::factory(5)->create(['role' => 'doctor']);
         $sam = new User(['first_name' => 'sam' , 'last_name' => 'samo' , 'username' => 'sam' , 'password' => bcrypt('samisamo') , 'role' => 'doctor']);
         $sam->save();
         Medicine::factory(100)->create();

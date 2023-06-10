@@ -11,9 +11,14 @@ class ComplementaryExamination extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['type' , 'result' , 'medical_record_id'];
+    protected $fillable = ['type' , 'result' , 'user_id'];
     public function medicalRecord() : BelongsTo
     {
         return $this->belongsTo(MedicalRecord::class);
+    }
+
+    public function doctor() : BelongsTo
+    {
+        return $this->belongsTo(User::class , 'user_id' , 'id');
     }
 }

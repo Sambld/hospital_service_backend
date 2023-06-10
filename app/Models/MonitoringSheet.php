@@ -20,6 +20,7 @@ class MonitoringSheet extends Model
         'temperature',
         'progress_report',
         'filled_by_id',
+        'user_id',
     ];
 
     public function medicalRecord(): BelongsTo
@@ -39,6 +40,11 @@ class MonitoringSheet extends Model
     public function treatments(): HasMany
     {
         return $this->hasMany(Treatment::class);
+    }
+
+    public function doctor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
 

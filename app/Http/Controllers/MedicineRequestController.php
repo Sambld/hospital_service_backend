@@ -113,7 +113,7 @@ class MedicineRequestController extends Controller
 
 
         $this->authorize('belongings', [$request, $patient, $medicalRecord, $prescription]);
-        $this->authorize('update', [MedicineRequest::class, $medicalRecord]);
+        $this->authorize('update', [MedicineRequest::class, $medicalRecord , $prescription]);
 
         if ($request->status == 'Approved') {
 
@@ -156,7 +156,7 @@ class MedicineRequestController extends Controller
     {
 
         $this->authorize('belongings', [$request, $patient, $medicalRecord, $prescription]);
-        $this->authorize('delete', [$request, $medicalRecord]);
+        $this->authorize('delete', [$request, $medicalRecord , $prescription]);
         $request->delete();
         return response()->json(['message' => 'medicine request deleted successfully.']);
     }

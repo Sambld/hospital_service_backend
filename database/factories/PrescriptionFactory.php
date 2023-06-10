@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,9 +18,11 @@ class PrescriptionFactory extends Factory
     public function definition(): array
     {
         $medicalRecord = $this->faker->randomElement(\App\Models\MedicalRecord::all());
+        $doctor = User::where('role' , 'doctor')->inRandomOrder()->first();
         return [
             'medical_record_id' => $medicalRecord->id,
             'name' => $this->faker->word,
+            'user_id' => $doctor->id,
         ];
     }
 }

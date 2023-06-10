@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('monitoring_sheets', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
             $table->unsignedBigInteger('record_id');
             $table->unsignedBigInteger('filled_by_id')->nullable();
             $table->foreign('record_id')->references('id')->on('medical_records')->cascadeOnDelete();

@@ -29,7 +29,7 @@ class AiController extends Controller
         # medicine_requests(id, user_id, prescription_id, medicine_id, quantity, status, review, created_at, updated_at)  // status: ( Pending, Approved, Rejected )
         # mandatory_declaration(id, diagnosis, detail, medical_record_id, created_at, updated_at)
         #
-        ### A query to get  ";
+        ### A query to";
         $q = \request()->get('q');
         if ($q) {
             $search .= $q;

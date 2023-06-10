@@ -21,11 +21,13 @@ class MonitoringSheetFactory extends Factory
     {
 
         $record = MedicalRecord::inRandomOrder()->first();
+        $doctor = User::where('role' , 'doctor')->inRandomOrder()->first();
         $staff = User::all()->where('role','nurse')->toQuery()->inRandomOrder()->first();
         $isFilled = fake()->boolean(60);
         if ($isFilled){
             return [
                 'record_id' => $record->id,
+                'user_id' => $doctor->id,
                 'filled_by_id' => $staff->id,
                 'filling_date' => fake()->dateTimeBetween('-7 days')->format('Y-m-d'),
                 'urine' => fake()->numberBetween(100, 1000),
@@ -37,6 +39,7 @@ class MonitoringSheetFactory extends Factory
         }else{
             return [
                 'record_id' => $record->id,
+                'user_id' => $doctor->id,
                 'filled_by_id' => null ,
                 'filling_date' => fake()->dateTimeBetween('now', '+7 days')->format('Y-m-d'),
                 'urine' => null,

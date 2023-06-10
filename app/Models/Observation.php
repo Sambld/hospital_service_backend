@@ -12,7 +12,7 @@ class Observation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name' , 'user_id'];
     public function medicalRecord() : BelongsTo
     {
         return $this->belongsTo(MedicalRecord::class);
@@ -21,5 +21,10 @@ class Observation extends Model
     public function images() : HasMany
     {
         return $this->hasMany(Image::class);
+    }
+
+    public function doctor() : BelongsTo
+    {
+        return $this->belongsTo(User::class , 'user_id' , 'id');
     }
 }

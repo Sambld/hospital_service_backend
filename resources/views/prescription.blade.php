@@ -141,7 +141,7 @@
 </div>
 <div id="doctor name" style="margin-top: 3em">
     <p style="display: inline ; font-size: 1em ; font-weight: bold ">Doctor :</p>
-    <p style="display: inline"> {{ $medicalRecord->assignedDoctor->first_name }} {{$medicalRecord->assignedDoctor->last_name }}</p>
+    <p style="display: inline"> {{ $prescription->doctor->first_name }} {{ $prescription->doctor->last_name }}</p>
 
 </div>
 <div id="patient_info" style="margin-top: 10px;margin-bottom: 30px; display: table; width: 100%;">

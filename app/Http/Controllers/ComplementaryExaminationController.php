@@ -19,7 +19,7 @@ class ComplementaryExaminationController extends Controller
     public function examination(Patient $patient , MedicalRecord $medicalRecord ,ComplementaryExamination $complementaryExamination) : JsonResponse
     {
         $this->authorize('belongings', [$complementaryExamination, $patient, $medicalRecord,]);
-        $data = $this->add_abilities(collect($complementaryExamination), $patient, $medicalRecord);
+        $data = $complementaryExamination->load('doctor');
 
         return response()->json(['data' => $data]);
     }
@@ -32,7 +32,7 @@ class ComplementaryExaminationController extends Controller
         $data = $this->add_abilities($medicalRecord->complementaryExaminations, $patient, $medicalRecord);
 
 
-        return response()->json(['data' => $data]);
+        return response()->json(['data' => $data->load('doctor')]);
 
 
     }
@@ -48,6 +48,7 @@ class ComplementaryExaminationController extends Controller
 
         $complementaryExamination = new ComplementaryExamination($validatedData);
         $complementaryExamination->medical_record_id = $medicalRecord->id;
+        $complementaryExamination->user_id = Auth::user()->id;
         $complementaryExamination->save();
 
         $this->add_abilities(collect([$complementaryExamination]), $patient, $medicalRecord);

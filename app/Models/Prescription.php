@@ -11,7 +11,7 @@ class Prescription extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name' , 'medical_record_id'];
+    protected $fillable = ['name' , 'medical_record_id' , 'user_id'];
 
 
     public function medicalRecord() : BelongsTo
@@ -22,5 +22,10 @@ class Prescription extends Model
     public function medicineRequests() : HasMany
     {
         return $this->hasMany(MedicineRequest::class , 'prescription_id');
+    }
+
+    public function doctor() : BelongsTo
+    {
+        return $this->belongsTo(User::class , 'user_id' , 'id');
     }
 }
