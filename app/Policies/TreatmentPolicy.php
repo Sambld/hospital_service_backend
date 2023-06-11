@@ -51,7 +51,7 @@ class TreatmentPolicy
     public function updateOrDelete(User $user , Treatment $treatment , Patient $patient , MedicalRecord $medicalRecord , MonitoringSheet $monitoringSheet): bool
     {
 //        error_log('update;');
-        return $medicalRecord->patient_id == $patient->id && $medicalRecord->id == $monitoringSheet->record_id && $monitoringSheet->id == $treatment->monitoring_sheet_id && $user->id == $medicalRecord->user_id && $user->isDoctor();
+        return $medicalRecord->patient_id == $patient->id && $medicalRecord->id == $monitoringSheet->record_id && $monitoringSheet->id == $treatment->monitoring_sheet_id && $user->id == $monitoringSheet->user_id && $user->isDoctor();
 
     }
 
