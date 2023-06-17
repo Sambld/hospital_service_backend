@@ -48,6 +48,12 @@ class MonitoringSheet extends Model
     }
 
 
+    public function monitoringSheetLogs() : HasMany
+    {
+        return $this->hasMany(MonitoringSheetLog::class);
+    }
+
+
 
 
 

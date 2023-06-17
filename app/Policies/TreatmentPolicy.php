@@ -21,7 +21,6 @@ class TreatmentPolicy
     }
     public function belongings(User $user , Treatment $treatment , Patient $patient , MedicalRecord $medicalRecord , MonitoringSheet $monitoringSheet): bool
     {
-//        dd($complementaryExamination, $patient, $medicalRecord);
         return $medicalRecord->patient_id == $patient->id && $medicalRecord->id == $monitoringSheet->record_id && $monitoringSheet->id == $treatment->monitoring_sheet_id;
     }
 
@@ -38,9 +37,8 @@ class TreatmentPolicy
      */
     public function create(User $user , Patient $patient , MedicalRecord $medicalRecord , MonitoringSheet $monitoringSheet): bool
     {
-//        error_log('observation create');
-//        dd($patient, $medicalRecord,$monitoringSheet);
-        return $medicalRecord->patient_id == $patient->id && $monitoringSheet->record_id == $medicalRecord->id && $user->id == $monitoringSheet->user_id;
+
+        return $medicalRecord->patient_id == $patient->id && $monitoringSheet->record_id == $medicalRecord->id && $user->isDoctor();
 
 
     }
@@ -51,7 +49,7 @@ class TreatmentPolicy
     public function updateOrDelete(User $user , Treatment $treatment , Patient $patient , MedicalRecord $medicalRecord , MonitoringSheet $monitoringSheet): bool
     {
 //        error_log('update;');
-        return $medicalRecord->patient_id == $patient->id && $medicalRecord->id == $monitoringSheet->record_id && $monitoringSheet->id == $treatment->monitoring_sheet_id && $user->id == $monitoringSheet->user_id && $user->isDoctor();
+        return $medicalRecord->patient_id == $patient->id && $medicalRecord->id == $monitoringSheet->record_id && $monitoringSheet->id == $treatment->monitoring_sheet_id &&  $user->isDoctor();
 
     }
 

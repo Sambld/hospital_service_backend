@@ -94,7 +94,6 @@ class MonitoringSheetController extends Controller
 
 
 //
-        error_log(request());
         $validatedData = \request()->validate([
             'urine' => 'nullable|integer',
             'blood_pressure' => 'nullable|string',
@@ -104,14 +103,23 @@ class MonitoringSheetController extends Controller
         ]);
 
 
-        if ($monitoringSheet->isFilled() && \auth()->user()->isNurse()) {
+        if (\auth()->user()->isNurse()) {
             $validatedData['filled_by_id'] = auth()->user()->id;
-
-        }else{
-            $validatedData['filled_by_id'] = \auth()->user()->id;
         }
+
+
+        $monitoringSheet->monitoringSheetLogs()->create([
+            'user_id' => Auth::user()->id,
+            'action' => 'update',
+            'type' => 'monitoring_sheet',
+            'previous_data' => $monitoringSheet->toJson(),
+        ]);
+
+
+
+
+
         $monitoringSheet->update($validatedData);
-        $monitoringSheet->refresh();
         return response()->json(['message' => 'Monitoring sheet updated successfully.' , 'data' => $monitoringSheet]);
 
 
@@ -122,6 +130,12 @@ class MonitoringSheetController extends Controller
         $this->authorize('belongings', [$monitoringSheet, $patient, $medicalRecord,]);
         $this->authorize('delete' , [$monitoringSheet, $medicalRecord]);
 
+        $monitoringSheet->monitoringSheetLogs()->create([
+            'user_id' => Auth::user()->id,
+            'action' => 'delete',
+            'type' => 'monitoring_sheet',
+            'previous_data' => $monitoringSheet->toJson(),
+        ]);
         $monitoringSheet->delete();
         return response()->json(['message' => 'monitoring sheet deleted successfully!']);
 

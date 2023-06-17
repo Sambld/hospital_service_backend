@@ -50,12 +50,11 @@ class SheetPolicy
      */
     public function update(User $user, MonitoringSheet $monitoringSheet, Patient $patient, MedicalRecord $medicalRecord)
     {
-        if ($monitoringSheet->isFilled()) {
-            return ($user->id == $monitoringSheet->user_id || $user->id == $monitoringSheet->filled_by_id);
-        } else {
-            if ($user->role == 'doctor') return $user->id == $monitoringSheet->user_id;
+        if (!$monitoringSheet->isFilled()) {
+            return $user->isNurse();
+        } else{
+            return ($user->isDoctor() || $user->id == $monitoringSheet->filled_by_id);
         }
-        return true;
 
 
     }

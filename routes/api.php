@@ -28,11 +28,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/predict' , function (Request $request){
-//    error_log($request);
-    error_log($request->get('file'));
-    return response()->json(['message' => 'success']);
-});
+
 
 Route::post('/user', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -106,6 +102,8 @@ Route::middleware('auth:sanctum')->group(function () {
         // statistics
         Route::get('/monitoring-sheets/latest-updates', [\App\Http\Controllers\StatisticsController::class, 'doctorMonitoringSheetsLatestUpdates']);
 
+        // ai search
+        Route::get('/ai-search', [\App\Http\Controllers\AiController::class, 'index']);
 
     });
 
@@ -218,7 +216,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
-Route::get('/ai-search', [\App\Http\Controllers\AiController::class, 'index']);
 
 
 

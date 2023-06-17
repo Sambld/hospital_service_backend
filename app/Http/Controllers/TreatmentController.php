@@ -41,6 +41,15 @@ class TreatmentController extends Controller
             'type' => 'required|string',
             'medicine_id' => 'required|exists:medicines,id',
         ]);
+
+        $monitoringSheet->monitoringSheetLogs()->create([
+            'user_id' => Auth::user()->id,
+            'action' => 'create',
+            'type' => 'treatment',
+            'previous_data' => null,
+        ]);
+
+
         $treatment = $monitoringSheet->treatments()->create($data);
         $data = $this->add_abilities($treatment, $patient, $medicalRecord, $monitoringSheet);
         return response()->json(['data' => $data]);
@@ -55,6 +64,13 @@ class TreatmentController extends Controller
             'type' => 'required|string',
             'medicine_id' => 'required|exists:medicines,id',
         ]);
+
+        $monitoringSheet->monitoringSheetLogs()->create([
+            'user_id' => Auth::user()->id,
+            'action' => 'update',
+            'type' => 'treatment',
+            'previous_data' => $treatment->toJson(),
+        ]);
         $treatment->update($data);
         $data = $this->add_abilities($treatment, $patient, $medicalRecord, $monitoringSheet);
         return response()->json(['data' => $data]);
@@ -63,6 +79,13 @@ class TreatmentController extends Controller
     public function delete(Patient $patient, MedicalRecord $medicalRecord, MonitoringSheet $monitoringSheet, Treatment $treatment)
     {
         $this->authorize('updateOrDelete', [$treatment, $patient, $medicalRecord, $monitoringSheet]);
+
+        $monitoringSheet->monitoringSheetLogs()->create([
+            'user_id' => Auth::user()->id,
+            'action' => 'delete',
+            'type' => 'treatment',
+            'previous_data' => $treatment->toJson(),
+        ]);
         $treatment->delete();
         return response()->json(['message' => 'Treatment deleted successfully.']);
     }
