@@ -26,7 +26,6 @@ class MedicineFactory extends Factory
             'name' => $name,
             'category' => $category,
             'description' => fake()->sentence(),
-            'price' => fake()->randomFloat(2, 1, 100),
             'quantity' => fake()->numberBetween(1, 100),
             'is_pharmaceutical' => fake()->boolean(),
             'manufacturer' => fake()->company(),

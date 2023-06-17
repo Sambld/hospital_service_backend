@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('category');
             $table->string('description');
-            $table->float('price')->nullable();
             $table->integer('quantity');
             $table->boolean('is_pharmaceutical');
             $table->string('manufacturer')->nullable();
