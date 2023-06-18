@@ -25,17 +25,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
 
         Patient::factory(50)->create();
-        User::factory(10)->create();
         // create 5 doctors
         User::factory(5)->create(['role' => 'doctor']);
+        // create 5 nurses
+        User::factory(4)->create(['role' => 'nurse']);
+        // create 2 pharmacists
         $sam = new User(['first_name' => 'sam' , 'last_name' => 'samo' , 'username' => 'sam' , 'password' => bcrypt('samisamo') , 'role' => 'doctor']);
         $sam->save();
         $nurse = new User(['first_name' => 'nurse' , 'last_name' => '1' , 'username' => 'nurse' , 'password' => bcrypt('pass') , 'role' => 'nurse']);
@@ -44,8 +40,8 @@ class DatabaseSeeder extends Seeder
         $admin->save();
         $doctor = new User(['first_name' => 'doctor' , 'last_name' => '1' , 'username' => 'doctor' , 'password' => bcrypt('pass') , 'role' => 'doctor']);
         $doctor->save();
-        $pharmasict = new User(['first_name' => 'pharmacist' , 'last_name' => '1' , 'username' => 'pharmacist' , 'password' => bcrypt('pass') , 'role' => 'pharmacist']);
-        $pharmasict->save();
+        $pharmacist = new User(['first_name' => 'pharmacist' , 'last_name' => '1' , 'username' => 'pharmacist' , 'password' => bcrypt('pass') , 'role' => 'pharmacist']);
+        $pharmacist->save();
 
         Medicine::factory(100)->create();
         MedicalRecord::factory(200)->has(MandatoryDeclaration::factory())->create();
@@ -66,11 +62,14 @@ class DatabaseSeeder extends Seeder
 
 
 
-        MonitoringSheet::factory(500)->has(Treatment::factory()->count(5))->create();
+
         ComplementaryExamination::factory(300)->create();
         Observation::factory(300)->hasImages(random_int(1,4))->create();
         Prescription::factory(200)->has(MedicineRequest::factory()->count(random_int(2,4)))->create();
-//        MedicineRequest::factory()->count(2000)->create();
+        MonitoringSheet::factory(2000)->has(Treatment::factory()->count(5))->create();
+
+
+
 
 
 

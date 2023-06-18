@@ -21,6 +21,11 @@ class MedicalRecordFactory extends Factory
     {
         $patient = Patient::inRandomOrder()->first();
         $user = User::where('role' , 'doctor')->inRandomOrder()->first();
+
+        $patientEntryDate = fake()->dateTimeBetween('-1 year', 'now')->format('Y-m-d');
+        // patient leaving date is between patient entry date and now
+        $patientLeavingDate = fake()->dateTimeBetween($patientEntryDate, 'now')->format('Y-m-d');
+
         return [
             //
             'patient_id' => $patient->id,
@@ -31,8 +36,8 @@ class MedicalRecordFactory extends Factory
             'standard_treatment' => fake()->sentence(),
             'state_upon_exit' => fake()->randomElement(['recovered', 'improved', 'stable']),
             'bed_number' => fake()->numberBetween(1, 100),
-            'patient_entry_date' => fake()->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
-            'patient_leaving_date' => fake()->dateTimeBetween('-1 month', '+1 month')->format('Y-m-d') ,
+            'patient_entry_date' => $patientEntryDate,
+            'patient_leaving_date' => $patientLeavingDate ,
         ];
     }
 }

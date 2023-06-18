@@ -24,39 +24,52 @@ class MedicalRecord extends Model
         'state_upon_enter',
         'standard_treatment',
         'state_upon_exit',
-        'bed_number' ,
+        'bed_number',
         'patient_entry_date',
         'patient_leaving_date',
     ];
-    public function patient() : BelongsTo {
+
+    public function patient(): BelongsTo
+    {
         return $this->belongsTo(Patient::class);
     }
 
-    public function assignedDoctor() : BelongsTo
+    public function assignedDoctor(): BelongsTo
     {
-        return $this->belongsTo(User::class , 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function complementaryExaminations() : HasMany
+    public function complementaryExaminations(): HasMany
     {
-        return $this->hasMany(ComplementaryExamination::class );
+        return $this->hasMany(ComplementaryExamination::class);
     }
-    public function prescriptions() : HasMany
+
+    public function prescriptions(): HasMany
     {
-        return $this->hasMany(Prescription::class , 'medical_record_id');
+        return $this->hasMany(Prescription::class, 'medical_record_id');
     }
-    public function observations() : HasMany
+
+    public function observations(): HasMany
     {
         return $this->hasMany(Observation::class);
     }
 
-    public function monitoringSheets() : HasMany
+    public function monitoringSheets(): HasMany
     {
-        return $this->hasMany(MonitoringSheet::class , 'record_id');
+        return $this->hasMany(MonitoringSheet::class, 'record_id');
     }
 
     public function mandatoryDeclaration(): HasOne
     {
         return $this->hasOne(MandatoryDeclaration::class, 'medical_record_id');
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->patient_leaving_date != null;
+
+        {
+
+        }
     }
 }

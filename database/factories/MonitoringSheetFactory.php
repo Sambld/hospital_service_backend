@@ -22,15 +22,24 @@ class MonitoringSheetFactory extends Factory
 
         $record = MedicalRecord::inRandomOrder()->first();
         $doctor = User::where('role' , 'doctor')->inRandomOrder()->first();
-        $staff = User::all()->where('role','nurse')->toQuery()->inRandomOrder()->first();
-        $isFilled = fake()->boolean(60);
+        $nurse = User::where('role' , 'nurse')->inRandomOrder()->first();
+
+
+        if ($record->isClosed()){
+            $fillingDate = fake()->dateTimeBetween($record->patient_entry_date, $record->patient_leaving_date)->format('Y-m-d H:m');
+        }
+        else{
+            $fillingDate = fake()->dateTimeBetween($record->patient_entry_date, 'now')->format('Y-m-d H:m');
+        }
+
+        $isFilled = $record->isClosed() || fake()->boolean(60);
         $isClosed = fake()->boolean(10);
         if ($isFilled){
             return [
                 'record_id' => $record->id,
                 'user_id' => $doctor->id,
-                'filled_by_id' => $staff->id,
-                'filling_date' => fake()->dateTimeBetween('-7 days')->format('Y-m-d H:m'),
+                'filled_by_id' => $nurse->id,
+                'filling_date' => $fillingDate,
                 'urine' => fake()->numberBetween(100, 1000),
                 'blood_pressure' => fake()->numberBetween(80, 200). '/' . fake()->numberBetween(50, 150),
                 'weight' => fake()->numberBetween(40, 200),
@@ -42,7 +51,7 @@ class MonitoringSheetFactory extends Factory
                 'record_id' => $record->id,
                 'user_id' => $doctor->id,
                 'filled_by_id' => null ,
-                'filling_date' => fake()->dateTimeBetween('now', '+7 days')->format('Y-m-d'),
+                'filling_date' => $fillingDate,
                 'urine' => null,
                 'blood_pressure' => null,
                 'weight' => null,
