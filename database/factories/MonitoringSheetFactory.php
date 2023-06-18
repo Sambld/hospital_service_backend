@@ -24,6 +24,7 @@ class MonitoringSheetFactory extends Factory
         $doctor = User::where('role' , 'doctor')->inRandomOrder()->first();
         $staff = User::all()->where('role','nurse')->toQuery()->inRandomOrder()->first();
         $isFilled = fake()->boolean(60);
+        $isClosed = fake()->boolean(10);
         if ($isFilled){
             return [
                 'record_id' => $record->id,

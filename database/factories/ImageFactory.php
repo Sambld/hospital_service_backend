@@ -19,10 +19,10 @@ class ImageFactory extends Factory
      */
     public function definition(): array
     {
-        $ce = ComplementaryExamination::inRandomOrder()->first();
+//        $ce = Observation::inRandomOrder()->first();
         return [
             'path' => 'image.jpg',
-            'observation_id' => $ce->id,
+            'observation_id' => Observation::factory(),
         ];
     }
 }

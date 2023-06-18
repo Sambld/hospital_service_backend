@@ -49,11 +49,27 @@ class DatabaseSeeder extends Seeder
 
         Medicine::factory(100)->create();
         MedicalRecord::factory(200)->has(MandatoryDeclaration::factory())->create();
+
+        // loop through each patient medical records and make only one active
+        foreach (Patient::all() as $patient) {
+            $medicalRecords = $patient->medicalRecords;
+            // if there is no medical records for this patient
+            if ($medicalRecords->count() > 0) {
+                if (fake()->boolean(20)) {
+                    $medicalRecords->last()->update(['patient_leaving_date' => null , 'state_upon_exit' => null]);
+                }
+            }
+
+
+        }
+
+
+
+
         MonitoringSheet::factory(500)->has(Treatment::factory()->count(5))->create();
         ComplementaryExamination::factory(300)->create();
-        Observation::factory(300)->create();
-        Image::factory(600)->create();
-        Prescription::factory(3)->has(MedicineRequest::factory()->count(3))->create();
+        Observation::factory(300)->hasImages(random_int(1,4))->create();
+        Prescription::factory(200)->has(MedicineRequest::factory()->count(random_int(2,4)))->create();
 //        MedicineRequest::factory()->count(2000)->create();
 
 

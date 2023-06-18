@@ -32,7 +32,7 @@ class MedicalRecordFactory extends Factory
             'state_upon_exit' => fake()->randomElement(['recovered', 'improved', 'stable']),
             'bed_number' => fake()->numberBetween(1, 100),
             'patient_entry_date' => fake()->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
-            'patient_leaving_date' => fake()->boolean(80) ? fake()->dateTimeBetween('now', '+1 month')->format('Y-m-d') : null,
+            'patient_leaving_date' => fake()->dateTimeBetween('-1 month', '+1 month')->format('Y-m-d') ,
         ];
     }
 }

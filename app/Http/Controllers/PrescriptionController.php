@@ -123,7 +123,7 @@ class PrescriptionController extends Controller
         $pdf->render();
 
         // Return the generated PDF as file
-        return $pdf->stream('prescription.pdf');
+        return $pdf->stream("prescription_"."$patientName"."_"."$prescriptionDate".".pdf");
     }
 
 
