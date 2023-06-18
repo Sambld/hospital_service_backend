@@ -97,8 +97,8 @@ class MonitoringSheetController extends Controller
         $validatedData = \request()->validate([
             'urine' => 'nullable|integer',
             'blood_pressure' => 'nullable|string',
-            'weight' => 'nullable|double|between:20,200',
-            'temperature' => 'nullable|double|between:30,45',
+            'weight' => 'nullable|numeric|between:20,200',
+            'temperature' => 'nullable|numeric|between:30,45',
             'progress_report' => 'nullable|string',
         ]);
 
