@@ -14,6 +14,7 @@ class AiController extends Controller
     public function index(): JsonResponse
     {
         $search = "
+        get only the generated sql query
         ### MySQL tables, with their properties:
         #
         # users(id, first_name, last_name, username, password, role, created_at, updated_at)
